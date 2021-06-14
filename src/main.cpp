@@ -1,8 +1,8 @@
 #include <stdio.h>
+#include <vector>
 
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
-#include <vector>
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
@@ -11,11 +11,7 @@
 #include "Mesh.h"
 #include "Shader.h"
 
-Window mainWindow;
-std::vector<Mesh*> meshList;
-std::vector<Shader> shaderList;
-
-void createObjects() {
+void createObjects(std::vector<Mesh*> *meshList) {
 	unsigned int indices[] = {
 		0, 3, 1,
 		1, 3, 2,
@@ -32,24 +28,28 @@ void createObjects() {
 
 	Mesh *obj1 = new Mesh();
 	obj1->createMesh(vertices, indices, 12, 12);
-	meshList.push_back(obj1);
+	meshList->push_back(obj1);
 }
 
-void createShaders() {
+void createShaders(std::vector<Shader> *shaderList) {
   static const char* vShader = "shaders/shader.vert";
   static const char* fShader = "shaders/shader.frag";
 
 	Shader *shader1 = new Shader();
 	shader1->createFromFiles(vShader, fShader);
-	shaderList.push_back(*shader1);
+	shaderList->push_back(*shader1);
 }
 
 int main() {
-  mainWindow = Window(1024, 768);
-  mainWindow.initialize();
+	Window mainWindow = Window(1024, 768);
+	mainWindow.initialize();
 
-  createObjects();
-  createShaders();
+	std::vector<Mesh *> meshList;
+	std::vector<Shader> shaderList;  
+	std::vector<Mesh *>::iterator mesh;
+
+  createObjects(&meshList);
+  createShaders(&shaderList);
 
   GLuint uniformProjection = 0, uniformModel = 0;
 	glm::mat4 projection = glm::perspective(glm::radians(45.0f), (GLfloat)mainWindow.getBufferWidth() / mainWindow.getBufferHeight(), 0.1f, 100.0f);
@@ -62,17 +62,20 @@ int main() {
 		glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-    shaderList[0].useShader();
-    uniformModel = shaderList[0].getModelLocation();
-    uniformProjection = shaderList[0].getProjectionLocation();
+		for(mesh = meshList.begin(); mesh != meshList.end(); ++mesh){
+			shaderList[0].useShader();
+			uniformModel = shaderList[0].getUniformLocation("model");
+			uniformProjection = shaderList[0].getUniformLocation("projection");
+			
+    	glm::mat4 model(1.0f);	
+			model = glm::translate(model, glm::vec3(0.0f, 0.0f, -2.5f));
+			model = glm::scale(model, glm::vec3(0.4f, 0.4f, 1.0f));
 
-    glm::mat4 model(1.0f);	
+			glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
+			glUniformMatrix4fv(uniformProjection, 1, GL_FALSE, glm::value_ptr(projection));
 
-    model = glm::translate(model, glm::vec3(0.0f, 0.0f, -2.5f));
-		model = glm::scale(model, glm::vec3(0.4f, 0.4f, 1.0f));
-		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
-		glUniformMatrix4fv(uniformProjection, 1, GL_FALSE, glm::value_ptr(projection));
-		meshList[0]->renderMesh();
+			(*mesh)->renderMesh();
+    }
 
 		glUseProgram(0);
 
