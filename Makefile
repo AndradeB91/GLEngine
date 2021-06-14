@@ -1,7 +1,7 @@
 LIBS=-lGLEW -lGLFW
 FRAMEWORKS=-framework OpenGL
 EXEC=GLEngine
-FILES=src/main.cpp src/Mesh.cpp src/Shader.cpp src/Window.cpp
+FILES=src/*.cpp
 
 compile: $(FILES)
 	g++ $(FILES) -o $(EXEC) $(LIBS) $(FRAMEWORKS)
