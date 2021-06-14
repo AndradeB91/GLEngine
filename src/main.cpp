@@ -11,9 +11,6 @@
 #include "Mesh.h"
 #include "Shader.h"
 
-// window dimensions
-const GLint WIDTH = 800, HEIGHT = 600;
-
 Window mainWindow;
 std::vector<Mesh*> meshList;
 std::vector<Shader> shaderList;
@@ -48,7 +45,7 @@ void createShaders() {
 }
 
 int main() {
-  mainWindow = Window(800, 600);
+  mainWindow = Window(1024, 768);
   mainWindow.initialize();
 
   createObjects();
