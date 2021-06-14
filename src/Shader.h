@@ -16,8 +16,7 @@ class Shader {
 
     std::string readFile(const char *fileLocation);
 
-    GLuint getProjectionLocation();
-    GLuint getModelLocation();
+    GLuint getUniformLocation(const char *uniform);
 
     void useShader();
     void clearShader();
@@ -25,7 +24,7 @@ class Shader {
     ~Shader();
 
   private:
-    GLuint _shaderID, _uniformProjection, _uniformModel;
+    GLuint _shaderID, _projection, _model;
 
     void compileShader(const char *vertexCode, const char *fragmentCode);
 

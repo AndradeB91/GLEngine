@@ -2,8 +2,6 @@
 
 Shader::Shader() {
   this->_shaderID = 0;
-  this->_uniformModel = 0;
-  this->_uniformProjection = 0;
 }
 
 void Shader::createFromString(const char *vertexCode, const char *fragmentCode) {
@@ -71,18 +69,10 @@ void Shader::compileShader(const char *vertexCode, const char *fragmentCode) {
   //   printf("Error validating program: '%s'\n", eLog);
   //   return;
   // }
-
-  this->_uniformProjection = glGetUniformLocation(this->_shaderID, "projection");
-  this->_uniformModel = glGetUniformLocation(this->_shaderID, "model");
 }
 
-
-GLuint Shader::getProjectionLocation() {
-  return this->_uniformProjection;
-}
-
-GLuint Shader::getModelLocation() { 
-  return this->_uniformModel;
+GLuint Shader::getUniformLocation(const char *uniform) {
+  return glGetUniformLocation(this->_shaderID, uniform);
 }
 
 void Shader::useShader() {
@@ -94,9 +84,6 @@ void Shader::clearShader() {
     glDeleteProgram(this->_shaderID);
     this->_shaderID = 0;
   }
-
-  this->_uniformModel = 0;
-  this->_uniformProjection = 0;
 }
 
 void Shader::addShader(GLuint program, const char *shaderCode, GLenum shaderType) {
