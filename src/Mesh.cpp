@@ -1,13 +1,15 @@
 #include "Mesh.h"
 
-Mesh::Mesh() {
+Mesh::Mesh()
+{
   this->_VAO = 0;
   this->_VBO = 0;
   this->_IBO = 0;
   this->_indexCount = 0;
 }
 
-void Mesh::createMesh(GLfloat *vertices, unsigned int *indices, unsigned int numOfVertices, unsigned int numOfIndices) {
+void Mesh::createMesh(GLfloat *vertices, unsigned int *indices, unsigned int numOfVertices, unsigned int numOfIndices)
+{
   this->_indexCount = numOfIndices;
 
   glGenVertexArrays(1, &this->_VAO);
@@ -30,7 +32,8 @@ void Mesh::createMesh(GLfloat *vertices, unsigned int *indices, unsigned int num
   glBindVertexArray(0);
 }
 
-void Mesh::renderMesh() {
+void Mesh::renderMesh()
+{
   glBindVertexArray(this->_VAO);
   glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, this->_IBO);
   glDrawElements(GL_TRIANGLES, this->_indexCount, GL_UNSIGNED_INT, 0);
@@ -38,18 +41,22 @@ void Mesh::renderMesh() {
   glBindVertexArray(0);
 }
 
-void Mesh::clearMesh() {
-  if(this->_IBO != 0) {
+void Mesh::clearMesh()
+{
+  if (this->_IBO != 0)
+  {
     glDeleteBuffers(1, &this->_IBO);
     this->_IBO = 0;
   }
 
-  if(this->_VBO != 0) {
+  if (this->_VBO != 0)
+  {
     glDeleteBuffers(1, &this->_VBO);
     this->_VBO = 0;
   }
 
-  if(this->_VAO != 0) {
+  if (this->_VAO != 0)
+  {
     glDeleteVertexArrays(1, &this->_VAO);
     this->_VAO = 0;
   }
@@ -57,6 +64,7 @@ void Mesh::clearMesh() {
   this->_indexCount = 0;
 }
 
-Mesh::~Mesh() {
+Mesh::~Mesh()
+{
   this->clearMesh();
 }

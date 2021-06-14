@@ -1,18 +1,22 @@
 #include "Window.h"
 
-Window::Window() {
+Window::Window()
+{
   this->_width = 800;
   this->_height = 600;
 };
 
-Window::Window(GLint width, GLint height) {
+Window::Window(GLint width, GLint height)
+{
   this->_width = width;
   this->_height = height;
 };
 
-int Window::initialize() {
+int Window::initialize()
+{
   // Initialize GLFW
-  if (!glfwInit()) {
+  if (!glfwInit())
+  {
     printf("GLFW initialization failed!\n");
     glfwTerminate();
     return 1;
@@ -32,7 +36,8 @@ int Window::initialize() {
 
   this->_mainWindow = glfwCreateWindow(this->_width, this->_height, "Main window", NULL, NULL);
 
-  if (!this->_mainWindow) {
+  if (!this->_mainWindow)
+  {
     printf("GLFW window creation failed!\n");
     glfwTerminate();
     return 1;
@@ -48,13 +53,13 @@ int Window::initialize() {
   glewExperimental = GL_TRUE;
 
   GLenum error = glewInit();
-	if (error != GLEW_OK)
-	{
-		printf("Error: %s", glewGetErrorString(error));
-		glfwDestroyWindow(this->_mainWindow);
-		glfwTerminate();
-		return 1;
-	}
+  if (error != GLEW_OK)
+  {
+    printf("Error: %s", glewGetErrorString(error));
+    glfwDestroyWindow(this->_mainWindow);
+    glfwTerminate();
+    return 1;
+  }
 
   glEnable(GL_DEPTH_TEST);
 
@@ -64,24 +69,28 @@ int Window::initialize() {
   return 0;
 }
 
-GLfloat Window::getBufferWidth() { 
-  return this->_bufferWidth; 
+GLfloat Window::getBufferWidth()
+{
+  return this->_bufferWidth;
 };
 
-GLfloat Window::getBufferHeight() { 
-  return this->_bufferHeight; 
+GLfloat Window::getBufferHeight()
+{
+  return this->_bufferHeight;
 };
 
-bool Window::getShouldClose() { 
-  return glfwWindowShouldClose(this->_mainWindow); 
+bool Window::getShouldClose()
+{
+  return glfwWindowShouldClose(this->_mainWindow);
 };
 
-void Window::swapBuffers() { 
-  glfwSwapBuffers(this->_mainWindow); 
+void Window::swapBuffers()
+{
+  glfwSwapBuffers(this->_mainWindow);
 }
 
-Window::~Window() {
+Window::~Window()
+{
   glfwDestroyWindow(this->_mainWindow);
   glfwTerminate();
 };
-

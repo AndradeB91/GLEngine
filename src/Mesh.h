@@ -2,19 +2,20 @@
 
 #include <GL/glew.h>
 
-class Mesh {
-  public: 
-    Mesh();
+class Mesh
+{
+public:
+  Mesh();
 
-    void createMesh(GLfloat *vertices, unsigned int *indices, unsigned int numOfVertices, unsigned int numOfIndices);
+  void createMesh(GLfloat *vertices, unsigned int *indices, unsigned int numOfVertices, unsigned int numOfIndices);
 
-    void renderMesh();
-    
-    void clearMesh();
+  void renderMesh();
 
-    ~Mesh();
+  void clearMesh();
 
-  private:
-    GLuint _VAO, _VBO, _IBO;
-    GLsizei _indexCount;
+  ~Mesh();
+
+private:
+  GLuint _VAO, _VBO, _IBO;
+  GLsizei _indexCount;
 };

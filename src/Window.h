@@ -4,25 +4,26 @@
 #include <GLFW/glfw3.h>
 #include <stdio.h>
 
-class Window {
-  public: 
-    Window();
+class Window
+{
+public:
+  Window();
 
-    Window(GLint windowWidth, GLint windowHeight);
+  Window(GLint windowWidth, GLint windowHeight);
 
-    int initialize();
+  int initialize();
 
-    GLfloat getBufferWidth();
-    GLfloat getBufferHeight();
+  GLfloat getBufferWidth();
+  GLfloat getBufferHeight();
 
-    bool getShouldClose();
+  bool getShouldClose();
 
-    void swapBuffers();
+  void swapBuffers();
 
-    ~Window();
+  ~Window();
 
-  private:
-    GLFWwindow *_mainWindow;
-    GLint _width, _height;
-    GLint _bufferWidth, _bufferHeight;
+private:
+  GLFWwindow *_mainWindow;
+  GLint _width, _height;
+  GLint _bufferWidth, _bufferHeight;
 };
