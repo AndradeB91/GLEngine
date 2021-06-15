@@ -5,17 +5,17 @@
 class Mesh
 {
 public:
-  Mesh();
+    Mesh();
 
-  void createMesh(GLfloat *vertices, unsigned int *indices, unsigned int numOfVertices, unsigned int numOfIndices);
+    void createMesh(GLfloat *vertices, unsigned int *indices, unsigned int numOfVertices, unsigned int numOfIndices);
 
-  void renderMesh();
+    void renderMesh();
 
-  void clearMesh();
+    void clearMesh();
 
-  ~Mesh();
+    ~Mesh();
 
 private:
-  GLuint _VAO, _VBO, _IBO;
-  GLsizei _indexCount;
+    GLuint _VAO, _VBO, _IBO;
+    GLsizei _indexCount;
 };

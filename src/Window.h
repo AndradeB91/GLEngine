@@ -9,37 +9,37 @@ const unsigned int TOTAL_KEYS = 1024;
 class Window
 {
 public:
-  Window(GLint windowWidth = 800, GLint windowHeight = 600);
+    Window(GLint windowWidth = 800, GLint windowHeight = 600);
 
-  int initialize();
+    int initialize();
 
-  GLfloat getBufferWidth();
-  GLfloat getBufferHeight();
+    GLfloat getBufferWidth();
+    GLfloat getBufferHeight();
 
-  bool getShouldClose();
+    bool getShouldClose();
 
-  bool *getKeys();
+    bool *getKeys();
 
-  GLfloat getXDelta();
-  GLfloat getYDelta();
+    GLfloat getXDelta();
+    GLfloat getYDelta();
 
-  void swapBuffers();
+    void swapBuffers();
 
-  ~Window();
+    ~Window();
 
 private:
-  GLFWwindow *_mainWindow;
+    GLFWwindow *_mainWindow;
 
-  GLint _width, _height;
-  GLint _bufferWidth, _bufferHeight;
+    GLint _width, _height;
+    GLint _bufferWidth, _bufferHeight;
 
-  GLfloat _lastX, _lastY, _xDelta, _yDelta;
-  bool _mouseFirstMoved;
+    GLfloat _lastX, _lastY, _xDelta, _yDelta;
+    bool _mouseFirstMoved;
 
-  bool _keys[TOTAL_KEYS];
+    bool _keys[TOTAL_KEYS];
 
-  void initKeys();
+    void initKeys();
 
-  static void handleKeys(GLFWwindow *window, int key, int code, int action, int mode);
-  static void handleMouse(GLFWwindow *window, double xPos, double yPos);
+    static void handleKeys(GLFWwindow *window, int key, int code, int action, int mode);
+    static void handleMouse(GLFWwindow *window, double xPos, double yPos);
 };
