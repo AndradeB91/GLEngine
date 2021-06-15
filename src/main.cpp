@@ -9,95 +9,85 @@
 
 #include "Window.h"
 #include "Mesh.h"
+#include "Model.h"
 #include "Shader.h"
 #include "Camera.h"
 
-GLfloat deltaTime = 0.0f, lastTime = 0.0f;
-
-void createObjects(std::vector<Mesh *> *meshList)
+Model *createPyramid()
 {
-	unsigned int indices[] = {
-			0, 3, 1,
-			1, 3, 2,
-			2, 3, 0,
-			0, 1, 2};
+    static const char *vShader = "shaders/shader.vert";
+    static const char *fShader = "shaders/shader.frag";
 
-	GLfloat vertices[] = {
-			-1.0f, -1.0f, 0.0f,
-			0.0f, -1.0f, 1.0f,
-			1.0f, -1.0f, 0.0f,
-			0.0f, 1.0f, 0.0f};
+    unsigned int indices[] = {
+        0, 3, 1,
+        1, 3, 2,
+        2, 3, 0,
+        0, 1, 2};
 
-	Mesh *obj1 = new Mesh();
-	obj1->createMesh(vertices, indices, 12, 12);
-	meshList->push_back(obj1);
-}
+    GLfloat vertices[] = {
+        -1.0f, -1.0f, 0.0f,
+        0.0f, -1.0f, 1.0f,
+        1.0f, -1.0f, 0.0f,
+        0.0f, 1.0f, 0.0f};
 
-void createShaders(std::vector<Shader> *shaderList)
-{
-	static const char *vShader = "shaders/shader.vert";
-	static const char *fShader = "shaders/shader.frag";
-
-	Shader *shader1 = new Shader();
-	shader1->createFromFiles(vShader, fShader);
-	shaderList->push_back(*shader1);
+    return new Model(vShader, fShader, vertices, indices, 12, 12);
 }
 
 int main()
 {
-	Window mainWindow = Window();
-	mainWindow.initialize();
+    GLfloat deltaTime = 0.0f, lastTime = 0.0f;
 
-	Camera camera = Camera();
+    Window mainWindow = Window();
+    mainWindow.initialize();
 
-	std::vector<Mesh *> meshList;
-	std::vector<Mesh *>::iterator mesh;
-	std::vector<Shader> shaderList;
+    Camera camera = Camera();
 
-	createObjects(&meshList);
-	createShaders(&shaderList);
+    std::vector<Model *> modelList;
+    std::vector<Model *>::iterator itModel;
 
-	GLuint uniformProjection = 0, uniformModel = 0, uniformView = 0;
-	glm::mat4 projection = glm::perspective(glm::radians(45.0f), (GLfloat)mainWindow.getBufferWidth() / mainWindow.getBufferHeight(), 0.1f, 100.0f);
+    modelList.push_back(createPyramid());
 
-	while (!mainWindow.getShouldClose())
-	{
-		GLfloat now = glfwGetTime();
-		deltaTime = now - lastTime;
-		lastTime = now;
+    glm::mat4 projection = glm::perspective(glm::radians(45.0f),
+                                            (GLfloat)mainWindow.getBufferWidth() / mainWindow.getBufferHeight(),
+                                            0.1f, 100.0f);
 
-		// Get and handle user input events
-		glfwPollEvents();
+    while (!mainWindow.getShouldClose())
+    {
+        GLfloat now = glfwGetTime();
+        deltaTime = now - lastTime;
+        lastTime = now;
 
-		camera.listenKeys(mainWindow.getKeys(), deltaTime);
-		camera.listenMouse(mainWindow.getXDelta(), mainWindow.getYDelta());
+        // Get and handle user input events
+        glfwPollEvents();
 
-		// Clear window
-		glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
-		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+        camera.listenKeys(mainWindow.getKeys(), deltaTime);
+        camera.listenMouse(mainWindow.getXDelta(), mainWindow.getYDelta());
 
-		for (mesh = meshList.begin(); mesh != meshList.end(); ++mesh)
-		{
-			shaderList[0].useShader();
-			uniformModel = shaderList[0].getUniformLocation("model");
-			uniformProjection = shaderList[0].getUniformLocation("projection");
-			uniformView = shaderList[0].getUniformLocation("view");
+        // Clear window
+        glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-			glm::mat4 model(1.0f);
-			model = glm::translate(model, glm::vec3(0.0f, 0.0f, -2.5f));
-			model = glm::scale(model, glm::vec3(0.4f, 0.4f, 1.0f));
+        for (itModel = modelList.begin(); itModel != modelList.end(); ++itModel)
+        {
+            (*itModel)->useShader();
 
-			glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
-			glUniformMatrix4fv(uniformProjection, 1, GL_FALSE, glm::value_ptr(projection));
-			glUniformMatrix4fv(uniformView, 1, GL_FALSE, glm::value_ptr(camera.calculateViewMatrix()));
+            glm::mat4 model(1.0f);
+            model = glm::translate(model, glm::vec3(0.0f, 0.0f, -2.5f));
+            model = glm::scale(model, glm::vec3(0.4f, 0.4f, 1.0f));
 
-			(*mesh)->renderMesh();
-		}
+            glm::mat4 view = camera.calculateViewMatrix();
 
-		glUseProgram(0);
+            (*itModel)->setMatrix("model", model);
+            (*itModel)->setMatrix("view", view);
+            (*itModel)->setMatrix("projection", projection);
 
-		mainWindow.swapBuffers();
-	}
+            (*itModel)->render();
+        }
 
-	return 0;
+        glUseProgram(0);
+
+        mainWindow.swapBuffers();
+    }
+
+    return 0;
 }
