@@ -1,5 +1,4 @@
 #include "Window.h"
-#include <algorithm>
 
 Window::Window(GLint width, GLint height)
 {
