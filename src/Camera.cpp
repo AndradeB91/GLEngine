@@ -1,6 +1,11 @@
 #include "Camera.h"
 
-Camera::Camera(glm::vec3 position, glm::vec3 up, GLfloat yaw, GLfloat pitch, GLfloat movementSpeed, GLfloat turnSpeed)
+Camera::Camera(glm::vec3 position,
+               glm::vec3 up,
+               GLfloat yaw,
+               GLfloat pitch,
+               GLfloat movementSpeed,
+               GLfloat turnSpeed)
 {
     this->_position = position;
     this->_worldUp = up;
@@ -55,7 +60,7 @@ void Camera::listenKeys(bool *keys, GLfloat deltaTime)
         this->_position -= this->_right * velocity;
     }
 
-    if (keys[GLFW_KEY_LEFT_CONTROL])
+    if (keys[GLFW_KEY_LEFT_SHIFT])
     {
         this->_position -= this->_up * velocity;
     }
