@@ -18,8 +18,8 @@
 
 Model *createPyramid()
 {
-    static const char *vertexShader = "shaders/shader.vert";
-    static const char *fragmentShader = "shaders/shader.frag";
+    static const char *vertexShader = "shaders/textured/shader.vert";
+    static const char *fragmentShader = "shaders/textured/shader.frag";
     static const char *texturePath = "textures/brick.png";
 
     unsigned int indices[] = {
@@ -41,6 +41,19 @@ Model *createPyramid()
                      indices,
                      20,
                      12);
+
+    // GLfloat vertices[] = {
+    //     -1.0f, -1.0f, 0.0f,
+    //     0.0f, -1.0f, 1.0f,
+    //     1.0f, -1.0f, 0.0f,
+    //     0.0f, 1.0f, 0.0f};
+
+    // return new Model(vertexShader,
+    //                  fragmentShader,
+    //                  vertices,
+    //                  indices,
+    //                  12,
+    //                  12);
 }
 
 int main()
@@ -79,8 +92,7 @@ int main()
 
         for (itModel = modelList.begin(); itModel != modelList.end(); ++itModel)
         {
-            (*itModel)->useShader();
-            (*itModel)->useTexture();
+            (*itModel)->prepareToRender();
 
             glm::mat4 model(1.0f);
             model = glm::translate(model, glm::vec3(0.0f, 0.0f, -2.5f));
