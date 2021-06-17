@@ -46,7 +46,8 @@ void Texture::loadTexture()
                  this->_width,
                  this->_height,
                  0,
-                 GL_RGBA, GL_UNSIGNED_BYTE,
+                 GL_RGBA,
+                 GL_UNSIGNED_BYTE,
                  texData);
 
     glGenerateMipmap(GL_TEXTURE_2D);
