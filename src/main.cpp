@@ -1,3 +1,5 @@
+#define STB_IMAGE_IMPLEMENTATION
+
 #include <stdio.h>
 #include <vector>
 
@@ -12,11 +14,13 @@
 #include "Model.h"
 #include "Shader.h"
 #include "Camera.h"
+#include "Texture.h"
 
 Model *createPyramid()
 {
-    static const char *vShader = "shaders/shader.vert";
-    static const char *fShader = "shaders/shader.frag";
+    static const char *vertexShader = "shaders/shader.vert";
+    static const char *fragmentShader = "shaders/shader.frag";
+    static const char *texturePath = "textures/brick.png";
 
     unsigned int indices[] = {
         0, 3, 1,
@@ -25,12 +29,18 @@ Model *createPyramid()
         0, 1, 2};
 
     GLfloat vertices[] = {
-        -1.0f, -1.0f, 0.0f,
-        0.0f, -1.0f, 1.0f,
-        1.0f, -1.0f, 0.0f,
-        0.0f, 1.0f, 0.0f};
+        -1.0f, -1.0f, 0.0f, 0.0f, 0.0f,
+        0.0f, -1.0f, 1.0f, 0.5f, 0.0f,
+        1.0f, -1.0f, 0.0f, 1.0f, 0.0f,
+        0.0f, 1.0f, 0.0f, 0.5f, 1.0f};
 
-    return new Model(vShader, fShader, vertices, indices, 12, 12);
+    return new Model(vertexShader,
+                     fragmentShader,
+                     texturePath,
+                     vertices,
+                     indices,
+                     20,
+                     12);
 }
 
 int main()
@@ -70,6 +80,7 @@ int main()
         for (itModel = modelList.begin(); itModel != modelList.end(); ++itModel)
         {
             (*itModel)->useShader();
+            (*itModel)->useTexture();
 
             glm::mat4 model(1.0f);
             model = glm::translate(model, glm::vec3(0.0f, 0.0f, -2.5f));
