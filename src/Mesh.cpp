@@ -1,4 +1,5 @@
 #include "Mesh.h"
+#include <iostream>
 
 Mesh::Mesh()
 {
@@ -11,10 +12,46 @@ Mesh::Mesh()
 void Mesh::createMesh(GLfloat *vertices,
                       unsigned int *indices,
                       unsigned int numOfVertices,
-                      unsigned int numOfIndices)
+                      unsigned int numOfIndices,
+                      unsigned int layouts,
+                      GLint layoutsSizes[],
+                      GLenum layoutsTypes[],
+                      unsigned int lineSize,
+                      unsigned int shifts[])
 {
     this->_indexCount = numOfIndices;
 
+    this->bindBuffers(vertices, indices, numOfVertices, numOfIndices);
+
+    for (unsigned int i = 0; i < layouts; i++)
+    {
+        this->setLayoutLocation(i,
+                                layoutsSizes[i],
+                                layoutsTypes[i],
+                                GL_FALSE,
+                                sizeof(vertices[0]) * lineSize,
+                                (void *)(sizeof(vertices[0]) * shifts[i]));
+    }
+
+    this->unbindBuffers();
+}
+
+void Mesh::setLayoutLocation(GLuint location,
+                             GLint size,
+                             GLenum type,
+                             GLboolean normalized,
+                             GLsizei stride,
+                             const void *pointer)
+{
+    glVertexAttribPointer(location, size, type, normalized, stride, pointer);
+    glEnableVertexAttribArray(location);
+}
+
+void Mesh::bindBuffers(GLfloat *vertices,
+                       unsigned int *indices,
+                       unsigned int numOfVertices,
+                       unsigned int numOfIndices)
+{
     glGenVertexArrays(1, &this->_VAO);
     glBindVertexArray(this->_VAO);
 
@@ -25,16 +62,10 @@ void Mesh::createMesh(GLfloat *vertices,
     glGenBuffers(1, &this->_VBO);
     glBindBuffer(GL_ARRAY_BUFFER, this->_VBO);
     glBufferData(GL_ARRAY_BUFFER, sizeof(vertices[0]) * numOfVertices, vertices, GL_STATIC_DRAW);
+}
 
-    // Pointing to the layout (location = 0) in vertex shader to store a vertice position
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(vertices[0]) * 5, 0);
-    glEnableVertexAttribArray(0);
-
-    // Pointing to the layout (location = 1) in vertex shader to store uv texture coordinates
-    glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, sizeof(vertices[0]) * 5, (void *)(sizeof(vertices[0]) * 3));
-    glEnableVertexAttribArray(1);
-
-    // unbind VBO, IBO and VAO
+void Mesh::unbindBuffers()
+{
     glBindBuffer(GL_ARRAY_BUFFER, 0);
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
     glBindVertexArray(0);
