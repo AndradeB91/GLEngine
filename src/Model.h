@@ -16,11 +16,19 @@ public:
           unsigned int numOfVertices,
           unsigned int numOfIndices);
 
+    Model(const char *vertexShader,
+          const char *fragmentShader,
+          GLfloat *vertices,
+          unsigned int *indices,
+          unsigned int numOfVertices,
+          unsigned int numOfIndices);
+
     ~Model();
 
     void setMatrix(const char *uniform, glm::mat4 matrix);
     void useShader();
     void useTexture();
+    void prepareToRender();
     void render();
 
 private:
