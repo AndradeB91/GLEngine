@@ -1,14 +1,24 @@
 #include "Model.h"
 
-Model::Model(const char *vertexShader, const char *fragmentShader,
-             GLfloat *vertices, unsigned int *indices,
-             unsigned int numOfVertices, unsigned int numOfIndices)
+Model::Model(const char *vertexShader,
+             const char *fragmentShader,
+             const char *texturePath,
+             GLfloat *vertices,
+             unsigned int *indices,
+             unsigned int numOfVertices,
+             unsigned int numOfIndices)
 {
     this->_shader = new Shader();
     this->_shader->createFromFiles(vertexShader, fragmentShader);
 
     this->_mesh = new Mesh();
     this->_mesh->createMesh(vertices, indices, numOfVertices, numOfIndices);
+
+    if (texturePath)
+    {
+        this->_texture = new Texture(texturePath);
+        this->_texture->loadTexture();
+    }
 }
 
 void Model::setMatrix(const char *uniform, glm::mat4 matrix)
@@ -20,6 +30,11 @@ void Model::setMatrix(const char *uniform, glm::mat4 matrix)
 void Model::useShader()
 {
     this->_shader->useShader();
+}
+
+void Model::useTexture()
+{
+    this->_texture->useTexture();
 }
 
 void Model::render()
