@@ -1,6 +1,5 @@
 #version 330
 
-in vec4 vCol;
 in vec2 texCoord;
 
 out vec4 colour;
