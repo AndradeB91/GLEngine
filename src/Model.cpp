@@ -51,10 +51,22 @@ Model::Model(const char *vertexShader,
     this->_texture = NULL;
 }
 
-void Model::setMatrix(const char *uniform, glm::mat4 matrix)
+void Model::setUniformMatrix4fv(const char *uniform, glm::mat4 matrix)
 {
     GLuint uniformLocation = this->_shader->getUniformLocation(uniform);
-    glUniformMatrix4fv(uniformLocation, 1, GL_FALSE, glm::value_ptr(matrix));
+    if (uniformLocation >= 0)
+    {
+        glUniformMatrix4fv(uniformLocation, 1, GL_FALSE, glm::value_ptr(matrix));
+    }
+}
+
+void Model::setUniform3f(const char *uniform, glm::vec3 vec)
+{
+    GLuint uniformLocation = this->_shader->getUniformLocation(uniform);
+    if (uniformLocation >= 0)
+    {
+        glUniform3f(uniformLocation, vec.x, vec.y, vec.z);
+    }
 }
 
 void Model::prepareToRender()

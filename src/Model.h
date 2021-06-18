@@ -25,7 +25,8 @@ public:
 
     ~Model();
 
-    void setMatrix(const char *uniform, glm::mat4 matrix);
+    void setUniformMatrix4fv(const char *uniform, glm::mat4 matrix);
+    void setUniform3f(const char *uniform, glm::vec3 vec);
     void useShader();
     void useTexture();
     void prepareToRender();
