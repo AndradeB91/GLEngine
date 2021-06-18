@@ -100,9 +100,11 @@ int main()
 
             glm::mat4 view = camera.calculateViewMatrix();
 
-            (*itModel)->setMatrix("model", model);
-            (*itModel)->setMatrix("view", view);
-            (*itModel)->setMatrix("projection", projection);
+            (*itModel)->setUniformMatrix4fv("model", model);
+            (*itModel)->setUniformMatrix4fv("view", view);
+            (*itModel)->setUniformMatrix4fv("projection", projection);
+
+            (*itModel)->setUniform3f("colour", glm::vec3(1.0f, 0.0f, 0.0f));
 
             (*itModel)->render();
         }
