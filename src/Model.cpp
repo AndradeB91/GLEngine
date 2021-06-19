@@ -16,14 +16,15 @@ Model::Model(const char *vertexShader,
                             indices,
                             numOfVertices,
                             numOfIndices,
-                            2,
-                            (GLint[]){3, 2},
-                            (GLenum[]){GL_FLOAT, GL_FLOAT},
-                            5,
-                            (unsigned int[]){0, 3});
+                            3,
+                            (GLint[]){3, 2, 3},
+                            (GLenum[]){GL_FLOAT, GL_FLOAT, GL_FLOAT},
+                            8,
+                            (unsigned int[]){0, 3, 5});
 
     this->_texture = new Texture(texturePath);
     this->_texture->loadTexture();
+    this->_modelMatrix = glm::mat4(1.0f);
 }
 
 Model::Model(const char *vertexShader,
@@ -49,6 +50,7 @@ Model::Model(const char *vertexShader,
                             (unsigned int[]){0});
 
     this->_texture = NULL;
+    this->_modelMatrix = glm::mat4(1.0f);
 }
 
 void Model::setUniformMatrix4fv(const char *uniform, glm::mat4 matrix)
@@ -67,6 +69,25 @@ void Model::setUniform3f(const char *uniform, glm::vec3 vec)
     {
         glUniform3f(uniformLocation, vec.x, vec.y, vec.z);
     }
+}
+
+void Model::setUniform1f(const char *uniform, GLfloat value)
+{
+    GLuint uniformLocation = this->_shader->getUniformLocation(uniform);
+    if (uniformLocation >= 0)
+    {
+        glUniform1f(uniformLocation, value);
+    }
+}
+
+void Model::setModelMatrix(glm::mat4 modelMatrix)
+{
+    this->_modelMatrix = modelMatrix;
+}
+
+glm::mat4 Model::getModelMatrix()
+{
+    return this->_modelMatrix;
 }
 
 void Model::prepareToRender()
