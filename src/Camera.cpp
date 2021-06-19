@@ -24,6 +24,11 @@ glm::mat4 Camera::calculateViewMatrix()
     return glm::lookAt(this->_position, this->_position + this->_front, this->_up);
 }
 
+glm::vec3 Camera::getPosition()
+{
+    return this->_position;
+}
+
 void Camera::update()
 {
     this->_front.x = cos(glm::radians(this->_yaw)) * cos(glm::radians(this->_pitch));

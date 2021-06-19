@@ -16,11 +16,13 @@ public:
         glm::vec3 up = glm::vec3(0.0f, 1.0f, 0.0f),
         GLfloat yaw = -90.0f,
         GLfloat pitch = 1.0f,
-        GLfloat movementSpeed = 5.0f,
+        GLfloat movementSpeed = 3.0f,
         GLfloat turnSpeed = 0.1f);
 
     void listenKeys(bool *keys, GLfloat deltaTime);
     void listenMouse(GLfloat xDelta, GLfloat yDelta);
+
+    glm::vec3 getPosition();
 
     glm::mat4 calculateViewMatrix();
 
