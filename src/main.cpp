@@ -70,12 +70,13 @@ Model *createPyramid()
 
     glm::mat4 modelMatrix(1.0f);
     modelMatrix = glm::translate(modelMatrix, glm::vec3(0.0f, 0.0f, -2.5f));
-    modelMatrix = glm::scale(modelMatrix, glm::vec3(0.4f, 0.4f, 1.0f));
+
+    Material *material = new Material(1.0f, 32);
 
     GLfloat vertices[] = {
-        -1.0f, -1.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+        -1.0f, -1.0f, -0.5f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
         0.0f, -1.0f, 1.0f, 0.5f, 0.0f, 0.0f, 0.0f, 0.0f,
-        1.0f, -1.0f, 0.0f, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+        1.0f, -1.0f, -0.5f, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f,
         0.0f, 1.0f, 0.0f, 0.5f, 1.0f, 0.0f, 0.0f, 0.0f};
 
     calcAverageNormals(indices, 12, vertices, 32, 8, 5);
@@ -89,6 +90,8 @@ Model *createPyramid()
                              12);
 
     model->setModelMatrix(modelMatrix);
+    model->setMaterial(material);
+
     return model;
 
     //     GLfloat vertices[] = {
@@ -112,22 +115,22 @@ int main()
 {
     GLfloat deltaTime = 0.0f, lastTime = 0.0f;
 
-    Window mainWindow = Window();
+    Window mainWindow = Window(1366, 768);
     mainWindow.initialize();
 
     Camera camera = Camera();
-    Light light = Light(1.0f, 1.0f, 1.0f, 0.2f,
-                        2.0f, -1.0f, -2.0f, 1.0f);
+    Light light = Light(1.0f, 1.0f, 1.0f, 0.2f, 2.0f, -1.0f, -2.0f, 0.3f);
 
     glm::mat4 projection = glm::perspective(glm::radians(45.0f),
-                                            (GLfloat)mainWindow.getBufferWidth() /
-                                                mainWindow.getBufferHeight(),
-                                            0.1f, 100.0f);
+                                            (GLfloat)mainWindow.getBufferWidth() / mainWindow.getBufferHeight(),
+                                            0.1f,
+                                            100.0f);
 
     Scene scene = Scene();
     scene.addModel(createPyramid());
     scene.setProjectionMatrix(projection);
     scene.setLight(light);
+    scene.setCameraPointer(&camera);
 
     while (!mainWindow.getShouldClose())
     {
@@ -138,18 +141,14 @@ int main()
         // Get and handle user input events
         glfwPollEvents();
 
-        camera.listenKeys(mainWindow.getKeys(), deltaTime);
-        camera.listenMouse(mainWindow.getXDelta(), mainWindow.getYDelta());
-
-        scene.setViewMatrix(camera.calculateViewMatrix());
-
         // Clear window
         glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-        scene.renderModels();
+        camera.listenKeys(mainWindow.getKeys(), deltaTime);
+        camera.listenMouse(mainWindow.getXDelta(), mainWindow.getYDelta());
 
-        glUseProgram(0);
+        scene.render();
 
         mainWindow.swapBuffers();
     }
