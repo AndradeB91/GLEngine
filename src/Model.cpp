@@ -90,6 +90,16 @@ glm::mat4 Model::getModelMatrix()
     return this->_modelMatrix;
 }
 
+void Model::setMaterial(Material *material)
+{
+    this->_material = material;
+}
+
+Material *Model::getMaterial()
+{
+    return this->_material;
+}
+
 void Model::prepareToRender()
 {
     if (this->_shader)
@@ -123,4 +133,5 @@ Model::~Model()
     free(this->_shader);
     free(this->_mesh);
     free(this->_texture);
+    free(this->_material);
 }

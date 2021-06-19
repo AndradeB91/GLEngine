@@ -3,6 +3,7 @@
 #include "Shader.h"
 #include "Mesh.h"
 #include "Texture.h"
+#include "Material.h"
 
 #include <glm/glm.hpp>
 #include <glm/gtc/type_ptr.hpp>
@@ -34,6 +35,9 @@ public:
     void setModelMatrix(glm::mat4 modelMatrix);
     glm::mat4 getModelMatrix();
 
+    void setMaterial(Material *material);
+    Material *getMaterial();
+
     void useShader();
     void useTexture();
 
@@ -44,5 +48,6 @@ private:
     Shader *_shader;
     Mesh *_mesh;
     Texture *_texture;
+    Material *_material;
     glm::mat4 _modelMatrix;
 };
