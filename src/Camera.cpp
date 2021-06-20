@@ -74,6 +74,16 @@ void Camera::listenKeys(bool *keys, GLfloat deltaTime)
     {
         this->_position += this->_up * velocity;
     }
+
+    if (keys[GLFW_KEY_EQUAL])
+    {
+        this->_movementSpeed += 0.2f;
+    }
+
+    if (keys[GLFW_KEY_MINUS])
+    {
+        this->_movementSpeed = std::max(0.0f, this->_movementSpeed - 0.2f);
+    }
 }
 
 void Camera::listenMouse(GLfloat xDelta, GLfloat yDelta)
@@ -82,7 +92,7 @@ void Camera::listenMouse(GLfloat xDelta, GLfloat yDelta)
     yDelta *= this->_turnSpeed;
 
     this->_yaw += xDelta;
-    this->_pitch = std::min(this->_pitch + yDelta, 89.9f);
+    this->_pitch = std::min(this->_pitch + yDelta, 89.0f);
 
     this->update();
 }
