@@ -6,9 +6,11 @@
 #include <glm/glm.hpp>
 
 #include "Model.h"
-#include "Light.h"
 #include "Camera.h"
 #include "Window.h"
+#include "Shader.h"
+#include "DirectionalLight.h"
+#include "PointLight.h"
 
 class Scene
 {
@@ -20,7 +22,9 @@ public:
 
     void setProjectionMatrix(glm::mat4 projectionMatrix);
 
-    void setLight(Light light);
+    void setDirectionalLight(DirectionalLight directionalLight);
+    void addPointLight(PointLight pointLight);
+
     void setCameraPointer(Camera *camera);
 
     void render();
@@ -30,7 +34,11 @@ private:
 
     glm::mat4 _projectionMatrix;
 
-    Light _light;
+    DirectionalLight _directionalLight;
+
+    unsigned int _pointLightsCount;
+
+    std::vector<PointLight *> _pointLights;
 
     Camera *_camera;
 };
