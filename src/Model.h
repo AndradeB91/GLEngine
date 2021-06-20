@@ -6,7 +6,6 @@
 #include "Material.h"
 
 #include <glm/glm.hpp>
-#include <glm/gtc/type_ptr.hpp>
 
 class Model
 {
@@ -28,18 +27,14 @@ public:
 
     ~Model();
 
-    void setUniformMatrix4fv(const char *uniform, glm::mat4 matrix);
-    void setUniform3f(const char *uniform, glm::vec3 vec);
-    void setUniform1f(const char *uniform, GLfloat value);
-
     void setModelMatrix(glm::mat4 modelMatrix);
     glm::mat4 getModelMatrix();
 
     void setMaterial(Material *material);
     Material *getMaterial();
 
-    void useShader();
-    void useTexture();
+    void setShader(Shader *shader);
+    Shader *getShader();
 
     void prepareToRender();
     void render();
