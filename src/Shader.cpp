@@ -85,6 +85,42 @@ GLuint Shader::getUniformLocation(const char *uniform)
     return glGetUniformLocation(this->_shaderID, uniform);
 }
 
+void Shader::setUniformMatrix4fv(const char *uniform, glm::mat4 matrix)
+{
+    GLuint uniformLocation = this->getUniformLocation(uniform);
+    if (uniformLocation >= 0)
+    {
+        glUniformMatrix4fv(uniformLocation, 1, GL_FALSE, glm::value_ptr(matrix));
+    }
+}
+
+void Shader::setUniform3f(const char *uniform, glm::vec3 vec)
+{
+    GLuint uniformLocation = this->getUniformLocation(uniform);
+    if (uniformLocation >= 0)
+    {
+        glUniform3f(uniformLocation, vec.x, vec.y, vec.z);
+    }
+}
+
+void Shader::setUniform1f(const char *uniform, GLfloat value)
+{
+    GLuint uniformLocation = this->getUniformLocation(uniform);
+    if (uniformLocation >= 0)
+    {
+        glUniform1f(uniformLocation, value);
+    }
+}
+
+void Shader::setUniform1i(const char *uniform, GLuint value)
+{
+    GLuint uniformLocation = this->getUniformLocation(uniform);
+    if (uniformLocation >= 0)
+    {
+        glUniform1i(uniformLocation, value);
+    }
+}
+
 void Shader::useShader()
 {
     glUseProgram(this->_shaderID);

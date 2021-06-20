@@ -7,6 +7,9 @@
 
 #include <GL/glew.h>
 
+#include <glm/glm.hpp>
+#include <glm/gtc/type_ptr.hpp>
+
 class Shader
 {
 public:
@@ -17,7 +20,10 @@ public:
 
     std::string readFile(const char *fileLocation);
 
-    GLuint getUniformLocation(const char *uniform);
+    void setUniformMatrix4fv(const char *uniform, glm::mat4 matrix);
+    void setUniform3f(const char *uniform, glm::vec3 vec);
+    void setUniform1f(const char *uniform, GLfloat value);
+    void setUniform1i(const char *uniform, GLuint value);
 
     void useShader();
     void clearShader();
@@ -30,4 +36,6 @@ private:
     void compileShader(const char *vertexCode, const char *fragmentCode);
 
     void addShader(GLuint program, const char *shaderCode, GLenum shaderType);
+
+    GLuint getUniformLocation(const char *uniform);
 };
