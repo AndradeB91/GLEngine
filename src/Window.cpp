@@ -4,10 +4,13 @@ Window::Window(GLint width, GLint height)
 {
     this->_width = width;
     this->_height = height;
+    this->_bufferWidth = 0.0f;
+    this->_bufferHeight = 0.0f;
     this->_lastX = 0.0f;
     this->_lastY = 0.0f;
     this->_xDelta = 0.0f;
     this->_yDelta = 0.0f;
+    this->_mouseFirstMoved = true;
     this->initKeys();
 }
 
