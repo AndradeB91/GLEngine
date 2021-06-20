@@ -15,7 +15,7 @@
 #include "Shader.h"
 #include "Camera.h"
 #include "Texture.h"
-#include "Light.h"
+#include "DirectionalLight.h"
 #include "Scene.h"
 
 void calcAverageNormals(unsigned int *indices, unsigned int indiceCount, GLfloat *vertices, unsigned int verticeCount,
@@ -119,7 +119,25 @@ int main()
     mainWindow.initialize();
 
     Camera camera = Camera();
-    Light light = Light(1.0f, 1.0f, 1.0f, 0.2f, 2.0f, -1.0f, -2.0f, 0.3f);
+
+    DirectionalLight directionalLight = DirectionalLight(1.0f, 1.0f, 1.0f,
+                                                         0.1f, 0.3f,
+                                                         0.0f, 0.0f, -1.0f);
+
+    PointLight pointLight1 = PointLight(0.0f, 1.0f, 0.0f,
+                                        0.1f, 1.0f,
+                                        -4.0f, 2.0f, 0.0f,
+                                        0.3f, 0.2f, 0.1f);
+
+    PointLight pointLight2 = PointLight(1.0f, 0.0f, 0.0f,
+                                        0.1f, 1.0f,
+                                        4.0f, 2.0f, 0.0f,
+                                        0.3f, 0.2f, 0.1f);
+
+    PointLight pointLight3 = PointLight(0.0f, 0.0f, 1.0f,
+                                        0.1f, 1.0f,
+                                        0.0f, 2.0f, -10.0f,
+                                        0.3f, 0.2f, 0.1f);
 
     glm::mat4 projection = glm::perspective(glm::radians(45.0f),
                                             (GLfloat)mainWindow.getBufferWidth() / mainWindow.getBufferHeight(),
@@ -129,7 +147,10 @@ int main()
     Scene scene = Scene();
     scene.addModel(createPyramid());
     scene.setProjectionMatrix(projection);
-    scene.setLight(light);
+    scene.setDirectionalLight(directionalLight);
+    scene.addPointLight(pointLight1);
+    scene.addPointLight(pointLight2);
+    scene.addPointLight(pointLight3);
     scene.setCameraPointer(&camera);
 
     while (!mainWindow.getShouldClose())
