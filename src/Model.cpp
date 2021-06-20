@@ -53,33 +53,6 @@ Model::Model(const char *vertexShader,
     this->_modelMatrix = glm::mat4(1.0f);
 }
 
-void Model::setUniformMatrix4fv(const char *uniform, glm::mat4 matrix)
-{
-    GLuint uniformLocation = this->_shader->getUniformLocation(uniform);
-    if (uniformLocation >= 0)
-    {
-        glUniformMatrix4fv(uniformLocation, 1, GL_FALSE, glm::value_ptr(matrix));
-    }
-}
-
-void Model::setUniform3f(const char *uniform, glm::vec3 vec)
-{
-    GLuint uniformLocation = this->_shader->getUniformLocation(uniform);
-    if (uniformLocation >= 0)
-    {
-        glUniform3f(uniformLocation, vec.x, vec.y, vec.z);
-    }
-}
-
-void Model::setUniform1f(const char *uniform, GLfloat value)
-{
-    GLuint uniformLocation = this->_shader->getUniformLocation(uniform);
-    if (uniformLocation >= 0)
-    {
-        glUniform1f(uniformLocation, value);
-    }
-}
-
 void Model::setModelMatrix(glm::mat4 modelMatrix)
 {
     this->_modelMatrix = modelMatrix;
@@ -100,27 +73,27 @@ Material *Model::getMaterial()
     return this->_material;
 }
 
+void Model::setShader(Shader *shader)
+{
+    this->_shader = shader;
+}
+
+Shader *Model::getShader()
+{
+    return this->_shader;
+}
+
 void Model::prepareToRender()
 {
     if (this->_shader)
     {
-        this->useShader();
+        this->_shader->useShader();
     }
 
     if (this->_texture)
     {
-        this->useTexture();
+        this->_texture->useTexture();
     }
-}
-
-void Model::useShader()
-{
-    this->_shader->useShader();
-}
-
-void Model::useTexture()
-{
-    this->_texture->useTexture();
 }
 
 void Model::render()
