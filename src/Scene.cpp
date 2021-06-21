@@ -4,7 +4,6 @@ Scene::Scene()
 {
     this->_projectionMatrix = glm::mat4(1.0f);
     this->_directionalLight = DirectionalLight();
-    this->_pointLightsCount = 0;
     this->_camera = new Camera();
 }
 
@@ -31,6 +30,16 @@ void Scene::addPointLight(PointLight pointLight)
     }
 
     this->_pointLights.push_back(&pointLight);
+}
+
+void Scene::addSpotLight(SpotLight *spotLight)
+{
+    if (this->_spotLights.size() > MAX_SPOT_LIGHTS)
+    {
+        return;
+    }
+
+    this->_spotLights.push_back(spotLight);
 }
 
 void Scene::setCameraPointer(Camera *camera)
@@ -92,6 +101,42 @@ void Scene::render()
 
             snprintf(buffer, sizeof(buffer), "pointLights[%d].exponent", i);
             shader->setUniform1f(buffer, pointLight->getExponent());
+        }
+
+        unsigned int spotLightsCount = this->_spotLights.size();
+        shader->setUniform1i("spotLightsCount", spotLightsCount);
+
+        for (int i = 0; i < spotLightsCount; i++)
+        {
+            char buffer[100] = {'\0'};
+            SpotLight *spotLight = this->_spotLights[i];
+
+            snprintf(buffer, sizeof(buffer), "spotLights[%d].base.base.colour", i);
+            shader->setUniform3f(buffer, spotLight->getColour());
+
+            snprintf(buffer, sizeof(buffer), "spotLights[%d].base.base.ambientIntensity", i);
+            shader->setUniform1f(buffer, spotLight->getAmbientIntensity());
+
+            snprintf(buffer, sizeof(buffer), "spotLights[%d].base.base.diffuseIntensity", i);
+            shader->setUniform1f(buffer, spotLight->getDiffuseIntensity());
+
+            snprintf(buffer, sizeof(buffer), "spotLights[%d].base.position", i);
+            shader->setUniform3f(buffer, spotLight->getPosition());
+
+            snprintf(buffer, sizeof(buffer), "spotLights[%d].base.constant", i);
+            shader->setUniform1f(buffer, spotLight->getConstant());
+
+            snprintf(buffer, sizeof(buffer), "spotLights[%d].base.linear", i);
+            shader->setUniform1f(buffer, spotLight->getLinear());
+
+            snprintf(buffer, sizeof(buffer), "spotLights[%d].base.exponent", i);
+            shader->setUniform1f(buffer, spotLight->getExponent());
+
+            snprintf(buffer, sizeof(buffer), "spotLights[%d].direction", i);
+            shader->setUniform3f(buffer, spotLight->getDirection());
+
+            snprintf(buffer, sizeof(buffer), "spotLights[%d].edge", i);
+            shader->setUniform1f(buffer, spotLight->getProcEdge());
         }
 
         (*itModel)->render();

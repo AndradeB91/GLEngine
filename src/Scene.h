@@ -11,8 +11,10 @@
 #include "Shader.h"
 #include "DirectionalLight.h"
 #include "PointLight.h"
+#include "SpotLight.h"
 
 const unsigned int MAX_POINT_LIGHTS = 3;
+const unsigned int MAX_SPOT_LIGHTS = 3;
 
 class Scene
 {
@@ -26,6 +28,7 @@ public:
 
     void setDirectionalLight(DirectionalLight directionalLight);
     void addPointLight(PointLight pointLight);
+    void addSpotLight(SpotLight *spotLight);
 
     void setCameraPointer(Camera *camera);
 
@@ -37,10 +40,8 @@ private:
     glm::mat4 _projectionMatrix;
 
     DirectionalLight _directionalLight;
-
-    unsigned int _pointLightsCount;
-
     std::vector<PointLight *> _pointLights;
+    std::vector<SpotLight *> _spotLights;
 
     Camera *_camera;
 };
