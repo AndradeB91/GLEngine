@@ -12,6 +12,8 @@
 #include "DirectionalLight.h"
 #include "PointLight.h"
 
+const unsigned int MAX_POINT_LIGHTS = 3;
+
 class Scene
 {
 public:

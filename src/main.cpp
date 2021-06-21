@@ -56,6 +56,41 @@ void calcAverageNormals(unsigned int *indices, unsigned int indiceCount, GLfloat
     }
 }
 
+Model *createFloor()
+{
+    static const char *vertexShader = "shaders/textured/shader.vert";
+    static const char *fragmentShader = "shaders/textured/shader.frag";
+    static const char *texturePath = "textures/plain.png";
+
+    unsigned int indices[] = {
+        0, 2, 1,
+        1, 2, 3};
+
+    GLfloat vertices[] = {
+        -10.0f, 0.0f, -10.0f, 0.0f, 0.0f, 0.0f, -1.0f, 0.0f,
+        10.0f, 0.0f, -10.0f, 10.0f, 0.0f, 0.0f, -1.0f, 0.0f,
+        -10.0f, 0.0f, 10.0f, 0.0f, 10.0f, 0.0f, -1.0f, 0.0f,
+        10.0f, 0.0f, 10.0f, 10.0f, 10.0f, 0.0f, -1.0f, 0.0f};
+
+    glm::mat4 modelMatrix(1.0f);
+    modelMatrix = glm::translate(modelMatrix, glm::vec3(0.0f, -2.0f, 0.0f));
+
+    Model *model = new Model(vertexShader,
+                             fragmentShader,
+                             texturePath,
+                             vertices,
+                             indices,
+                             32,
+                             6);
+
+    Material *material = new Material(10.0f, 128);
+
+    model->setMaterial(material);
+    model->setModelMatrix(modelMatrix);
+
+    return model;
+}
+
 Model *createPyramid()
 {
     static const char *vertexShader = "shaders/textured/shader.vert";
@@ -68,16 +103,16 @@ Model *createPyramid()
         2, 3, 0,
         0, 1, 2};
 
-    glm::mat4 modelMatrix(1.0f);
-    modelMatrix = glm::translate(modelMatrix, glm::vec3(0.0f, 0.0f, -2.5f));
-
-    Material *material = new Material(1.0f, 32);
-
     GLfloat vertices[] = {
         -1.0f, -1.0f, -0.5f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
         0.0f, -1.0f, 1.0f, 0.5f, 0.0f, 0.0f, 0.0f, 0.0f,
         1.0f, -1.0f, -0.5f, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f,
         0.0f, 1.0f, 0.0f, 0.5f, 1.0f, 0.0f, 0.0f, 0.0f};
+
+    glm::mat4 modelMatrix(1.0f);
+    modelMatrix = glm::translate(modelMatrix, glm::vec3(0.0f, 0.0f, -2.5f));
+
+    Material *material = new Material(1.0f, 32);
 
     calcAverageNormals(indices, 12, vertices, 32, 8, 5);
 
@@ -93,22 +128,6 @@ Model *createPyramid()
     model->setMaterial(material);
 
     return model;
-
-    //     GLfloat vertices[] = {
-    //         -1.0f, -1.0f, 0.0f,
-    //         0.0f, -1.0f, 1.0f,
-    //         1.0f, -1.0f, 0.0f,
-    //         0.0f, 1.0f, 0.0f};
-
-    //     Model *model = new Model(vertexShader,
-    //                              fragmentShader,
-    //                              vertices,
-    //                              indices,
-    //                              12,
-    //                              12);
-
-    //     model->setModelMatrix(modelMatrix);
-    //     return model;
 }
 
 int main()
@@ -120,7 +139,7 @@ int main()
 
     Camera camera = Camera();
 
-    DirectionalLight directionalLight = DirectionalLight(1.0f, 1.0f, 1.0f,
+    DirectionalLight directionalLight = DirectionalLight(0.0f, 0.0f, 0.0f,
                                                          0.1f, 0.3f,
                                                          0.0f, 0.0f, -1.0f);
 
@@ -145,12 +164,17 @@ int main()
                                             100.0f);
 
     Scene scene = Scene();
+
     scene.addModel(createPyramid());
+    scene.addModel(createFloor());
+
     scene.setProjectionMatrix(projection);
     scene.setDirectionalLight(directionalLight);
+
     scene.addPointLight(pointLight1);
     scene.addPointLight(pointLight2);
     scene.addPointLight(pointLight3);
+
     scene.setCameraPointer(&camera);
 
     while (!mainWindow.getShouldClose())
