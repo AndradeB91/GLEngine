@@ -38,12 +38,6 @@ SpotLight::SpotLight(GLfloat red,
     this->_procEdge = cosf(glm::radians(this->_edge));
 }
 
-void SpotLight::setFlash(glm::vec3 position, glm::vec3 direction)
-{
-    this->_position = position;
-    this->_direction = direction;
-}
-
 glm::vec3 SpotLight::getDirection()
 {
     return this->_direction;

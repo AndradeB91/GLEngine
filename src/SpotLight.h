@@ -26,13 +26,11 @@ public:
 
     glm::vec3 getDirection();
 
-    void setFlash(glm::vec3 position, glm::vec3 direction);
-
     GLfloat getProcEdge();
 
     ~SpotLight();
 
-private:
+protected:
     glm::vec3 _direction;
 
     GLfloat _edge, _procEdge;
