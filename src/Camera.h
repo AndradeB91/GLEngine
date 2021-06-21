@@ -23,6 +23,7 @@ public:
     void listenMouse(GLfloat xDelta, GLfloat yDelta);
 
     glm::vec3 getPosition();
+    glm::vec3 getDirection();
 
     glm::mat4 calculateViewMatrix();
 
