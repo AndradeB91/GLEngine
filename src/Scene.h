@@ -12,9 +12,10 @@
 #include "DirectionalLight.h"
 #include "PointLight.h"
 #include "SpotLight.h"
+#include "FlashLight.h"
 
-const unsigned int MAX_POINT_LIGHTS = 3;
-const unsigned int MAX_SPOT_LIGHTS = 3;
+const unsigned int MAX_POINT_LIGHTS = 10;
+const unsigned int MAX_SPOT_LIGHTS = 10;
 
 class Scene
 {
@@ -27,6 +28,7 @@ public:
     void setProjectionMatrix(glm::mat4 projectionMatrix);
 
     void setDirectionalLight(DirectionalLight directionalLight);
+    void setFlashLight(FlashLight *flashLight);
     void addPointLight(PointLight pointLight);
     void addSpotLight(SpotLight *spotLight);
 
@@ -40,8 +42,14 @@ private:
     glm::mat4 _projectionMatrix;
 
     DirectionalLight _directionalLight;
+    FlashLight *_flashLight;
     std::vector<PointLight *> _pointLights;
     std::vector<SpotLight *> _spotLights;
 
     Camera *_camera;
+
+    void renderDirectionalLight(Shader *shader);
+    void renderPointLights(Shader *shader);
+    void renderSpotLights(Shader *shader);
+    void updateFlashLight();
 };
