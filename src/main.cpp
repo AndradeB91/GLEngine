@@ -16,6 +16,8 @@
 #include "Camera.h"
 #include "Texture.h"
 #include "DirectionalLight.h"
+#include "SpotLight.h"
+#include "FlashLight.h"
 #include "Scene.h"
 
 void calcAverageNormals(unsigned int *indices, unsigned int indiceCount, GLfloat *vertices, unsigned int verticeCount,
@@ -158,12 +160,12 @@ int main()
                                         0.0f, 2.0f, -10.0f,
                                         0.3f, 0.2f, 0.1f);
 
-    SpotLight *spotLight1 = new SpotLight(1.0f, 1.0f, 1.0f,
-                                          0.0f, 2.0f,
-                                          0.0f, 0.0f, 0.0f,
-                                          0.0f, -1.0f, 0.0f,
-                                          1.0f, 0.0f, 0.0f,
-                                          20.0f);
+    FlashLight *flashLight = new FlashLight(1.0f, 1.0f, 1.0f,
+                                            0.0f, 2.0f,
+                                            0.0f, 0.0f, 0.0f,
+                                            0.0f, -1.0f, 0.0f,
+                                            1.0f, 0.0f, 0.0f,
+                                            10.0f);
 
     SpotLight *spotLight2 = new SpotLight(1.0f, 1.0f, 1.0f,
                                           0.0f, 1.0f,
@@ -189,8 +191,8 @@ int main()
     scene.addPointLight(pointLight2);
     scene.addPointLight(pointLight3);
 
-    scene.addSpotLight(spotLight1);
     scene.addSpotLight(spotLight2);
+    scene.setFlashLight(flashLight);
 
     scene.setCameraPointer(&camera);
 
@@ -209,10 +211,6 @@ int main()
 
         camera.listenKeys(mainWindow.getKeys(), deltaTime);
         camera.listenMouse(mainWindow.getXDelta(), mainWindow.getYDelta());
-
-        glm::vec3 lanternPosition = camera.getPosition();
-        lanternPosition.y -= 0.4f;
-        spotLight1->setFlash(lanternPosition, camera.getDirection());
 
         scene.render();
 
