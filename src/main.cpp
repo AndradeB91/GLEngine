@@ -60,7 +60,7 @@ Model *createFloor()
 {
     static const char *vertexShader = "shaders/textured/shader.vert";
     static const char *fragmentShader = "shaders/textured/shader.frag";
-    static const char *texturePath = "textures/plain.png";
+    static const char *texturePath = "textures/dirt.png";
 
     unsigned int indices[] = {
         0, 2, 1,
@@ -139,8 +139,8 @@ int main()
 
     Camera camera = Camera();
 
-    DirectionalLight directionalLight = DirectionalLight(0.0f, 0.0f, 0.0f,
-                                                         0.1f, 0.3f,
+    DirectionalLight directionalLight = DirectionalLight(1.0f, 1.0f, 1.0f,
+                                                         0.0f, 0.3f,
                                                          0.0f, 0.0f, -1.0f);
 
     PointLight pointLight1 = PointLight(0.0f, 1.0f, 0.0f,
@@ -157,6 +157,20 @@ int main()
                                         0.1f, 1.0f,
                                         0.0f, 2.0f, -10.0f,
                                         0.3f, 0.2f, 0.1f);
+
+    SpotLight *spotLight1 = new SpotLight(1.0f, 1.0f, 1.0f,
+                                          0.0f, 2.0f,
+                                          0.0f, 0.0f, 0.0f,
+                                          0.0f, -1.0f, 0.0f,
+                                          1.0f, 0.0f, 0.0f,
+                                          20.0f);
+
+    SpotLight *spotLight2 = new SpotLight(1.0f, 1.0f, 1.0f,
+                                          0.0f, 1.0f,
+                                          0.0f, 0.0f, 0.0f,
+                                          -5.0f, -1.0f, 0.0f,
+                                          1.0f, 0.0f, 0.0f,
+                                          20.0f);
 
     glm::mat4 projection = glm::perspective(glm::radians(45.0f),
                                             (GLfloat)mainWindow.getBufferWidth() / mainWindow.getBufferHeight(),
@@ -175,6 +189,9 @@ int main()
     scene.addPointLight(pointLight2);
     scene.addPointLight(pointLight3);
 
+    scene.addSpotLight(spotLight1);
+    scene.addSpotLight(spotLight2);
+
     scene.setCameraPointer(&camera);
 
     while (!mainWindow.getShouldClose())
@@ -192,6 +209,10 @@ int main()
 
         camera.listenKeys(mainWindow.getKeys(), deltaTime);
         camera.listenMouse(mainWindow.getXDelta(), mainWindow.getYDelta());
+
+        glm::vec3 lanternPosition = camera.getPosition();
+        lanternPosition.y -= 0.4f;
+        spotLight1->setFlash(lanternPosition, camera.getDirection());
 
         scene.render();
 
