@@ -1,6 +1,5 @@
 #version 330
 
-in vec2 texCoord;
 in vec3 normal;
 in vec3 fragPos;
 in vec4 vCol;
@@ -55,6 +54,10 @@ uniform DirectionalLight directionalLight;
 uniform sampler2D theTexture;
 uniform Material material;
 uniform vec3 eyePosition;
+
+uniform vec3 modelColour;
+
+uniform int useTexture;
 
 vec4 calcLightByDirection(Light light, vec3 direction)
 {
@@ -150,5 +153,6 @@ void main()
                        calcPointLights() + 
                        calcSpotLights();
 
-    colour = texture(theTexture, texCoord) * finalColour;
+
+    colour = vec4(modelColour, 1.0f) * finalColour;
 }
