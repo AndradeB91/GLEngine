@@ -5,6 +5,7 @@ Scene::Scene()
     this->_projectionMatrix = glm::mat4(1.0f);
     this->_directionalLight = DirectionalLight();
     this->_camera = new Camera();
+    this->_flashLight = NULL;
 }
 
 void Scene::addModel(Model *model)
@@ -139,7 +140,10 @@ void Scene::updateFlashLight()
 {
     Camera *camera = this->_camera;
     FlashLight *flashLight = this->_flashLight;
-    flashLight->update(camera->getPosition(), camera->getDirection());
+    if (flashLight != NULL)
+    {
+        flashLight->update(camera->getPosition(), camera->getDirection());
+    }
 }
 
 void Scene::render()
@@ -153,6 +157,9 @@ void Scene::render()
         Shader *shader = (*itModel)->getShader();
         Material *material = (*itModel)->getMaterial();
         Camera *camera = this->_camera;
+        Texture *texture = (*itModel)->getTexture();
+
+        shader->setUniform3f("modelColour", (*itModel)->getColour());
 
         shader->setUniformMatrix4fv("model", (*itModel)->getModelMatrix());
         shader->setUniformMatrix4fv("projection", this->_projectionMatrix);

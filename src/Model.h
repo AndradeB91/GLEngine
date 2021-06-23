@@ -36,6 +36,12 @@ public:
     void setShader(Shader *shader);
     Shader *getShader();
 
+    void setTexture(Texture *texture);
+    Texture *getTexture();
+
+    void setColour(GLfloat red, GLfloat green, GLfloat blue);
+    glm::vec3 getColour();
+
     void prepareToRender();
     void render();
 
@@ -45,4 +51,5 @@ private:
     Texture *_texture;
     Material *_material;
     glm::mat4 _modelMatrix;
+    glm::vec3 _colour;
 };

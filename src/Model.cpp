@@ -17,14 +17,17 @@ Model::Model(const char *vertexShader,
                             numOfVertices,
                             numOfIndices,
                             3,
+                            (GLint[]){0, 1, 2},
                             (GLint[]){3, 2, 3},
                             (GLenum[]){GL_FLOAT, GL_FLOAT, GL_FLOAT},
                             8,
                             (unsigned int[]){0, 3, 5});
 
     this->_texture = new Texture(texturePath);
-    this->_texture->loadTexture();
+    this->_texture->loadTextureA();
+    this->_material = new Material();
     this->_modelMatrix = glm::mat4(1.0f);
+    this->_colour = glm::vec3(1.0f, 1.0f, 1.0f);
 }
 
 Model::Model(const char *vertexShader,
@@ -43,14 +46,17 @@ Model::Model(const char *vertexShader,
                             indices,
                             numOfVertices,
                             numOfIndices,
-                            1,
-                            (GLint[]){3},
-                            (GLenum[]){GL_FLOAT},
-                            0,
-                            (unsigned int[]){0});
+                            2,
+                            (GLint[]){0, 1},
+                            (GLint[]){3, 3},
+                            (GLenum[]){GL_FLOAT, GL_FLOAT},
+                            6,
+                            (unsigned int[]){0, 3});
 
     this->_texture = NULL;
+    this->_material = new Material();
     this->_modelMatrix = glm::mat4(1.0f);
+    this->_colour = glm::vec3(1.0f, 1.0f, 1.0f);
 }
 
 void Model::setModelMatrix(glm::mat4 modelMatrix)
@@ -83,14 +89,34 @@ Shader *Model::getShader()
     return this->_shader;
 }
 
+void Model::setTexture(Texture *texture)
+{
+    this->_texture = texture;
+}
+
+Texture *Model::getTexture()
+{
+    return this->_texture;
+}
+
+void Model::setColour(GLfloat red, GLfloat green, GLfloat blue)
+{
+    this->_colour = glm::vec3(red, green, blue);
+}
+
+glm::vec3 Model::getColour()
+{
+    return this->_colour;
+}
+
 void Model::prepareToRender()
 {
-    if (this->_shader)
+    if (this->_shader != NULL)
     {
         this->_shader->useShader();
     }
 
-    if (this->_texture)
+    if (this->_texture != NULL)
     {
         this->_texture->useTexture();
     }
