@@ -13,6 +13,7 @@ void Mesh::createMesh(GLfloat *vertices,
                       unsigned int numOfVertices,
                       unsigned int numOfIndices,
                       unsigned int layouts,
+                      GLint layoutsLocations[],
                       GLint layoutsSizes[],
                       GLenum layoutsTypes[],
                       unsigned int lineSize,
@@ -24,7 +25,7 @@ void Mesh::createMesh(GLfloat *vertices,
 
     for (unsigned int i = 0; i < layouts; i++)
     {
-        this->setLayoutLocation(i,
+        this->setLayoutLocation(layoutsLocations[i],
                                 layoutsSizes[i],
                                 layoutsTypes[i],
                                 GL_FALSE,

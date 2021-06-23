@@ -12,6 +12,7 @@ public:
                     unsigned int numOfVertices,
                     unsigned int numOfIndices,
                     unsigned int layouts,
+                    GLint layoutsLocations[],
                     GLint sizes[],
                     GLenum layoutsTypes[],
                     unsigned int lineSize,
