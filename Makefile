@@ -1,10 +1,10 @@
-LIBS=-lGLEW -lGLFW
+LIBS=-lGLEW -lGLFW -lassimp
 FRAMEWORKS=-framework OpenGL
 EXEC=GLEngine
 FILES=src/*.cpp
 
 compile: $(FILES)
-	g++ $(FILES) -o $(EXEC) $(LIBS) $(FRAMEWORKS)
+	g++ -std=c++11 $(FILES) -o $(EXEC) $(LIBS) $(FRAMEWORKS)
 
 run: $(EXEC)
 	./$(EXEC)

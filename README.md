@@ -25,6 +25,11 @@ A simple engine to modify obj models and reconstruct patches with the help of th
   brew install glew
   ```
 
+* Assimp:  
+  ```
+  brew install assimp
+  ```
+  
 * Only tested on macOSX
 
 ### Installing and executing
