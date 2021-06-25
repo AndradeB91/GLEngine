@@ -2,8 +2,8 @@
 
 Light::Light()
 {
-    this->_colour = glm::vec3(1.0f, 1.0f, 1.0f);
-    this->_ambientIntensity = 1.0f;
+    this->_colour = glm::vec3(0.0f, 0.0f, 0.0f);
+    this->_ambientIntensity = 0.0f;
     this->_diffuseIntensity = 0.0f;
 }
 
