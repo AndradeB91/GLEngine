@@ -57,8 +57,6 @@ uniform vec3 eyePosition;
 
 uniform vec3 modelColour;
 
-uniform int useTexture;
-
 vec4 calcLightByDirection(Light light, vec3 direction)
 {
     vec4 ambientColour = vec4(light.colour, 1.0f) * light.ambientIntensity;
