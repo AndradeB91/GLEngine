@@ -59,7 +59,7 @@ bool Texture::loadTexture()
     return true;
 }
 
-bool Texture::loadTextureA()
+bool Texture::loadTextureWithAlpha()
 {
     unsigned char *texData = stbi_load(this->_fileLocation,
                                        &this->_width,

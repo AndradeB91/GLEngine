@@ -24,7 +24,7 @@ Model::Model(const char *vertexShader,
                             (unsigned int[]){0, 3, 5});
 
     this->_texture = new Texture(texturePath);
-    this->_texture->loadTextureA();
+    this->_texture->loadTextureWithAlpha();
     this->_material = new Material();
     this->_modelMatrix = glm::mat4(1.0f);
     this->_colour = glm::vec3(1.0f, 1.0f, 1.0f);

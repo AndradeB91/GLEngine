@@ -12,7 +12,7 @@ public:
     Texture(const char *fileLocation);
 
     bool loadTexture();
-    bool loadTextureA();
+    bool loadTextureWithAlpha();
 
     void useTexture();
     void clearTexture();
