@@ -13,6 +13,14 @@ void Scene::addModel(Model *model)
     this->_modelList.push_back(model);
 }
 
+void Scene::addModels(std::vector<Model *> models)
+{
+    for (size_t i = 0; i < models.size(); i++)
+    {
+        this->_modelList.push_back(models[i]);
+    }
+}
+
 void Scene::setProjectionMatrix(glm::mat4 projectionMatrix)
 {
     this->_projectionMatrix = projectionMatrix;

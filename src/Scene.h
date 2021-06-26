@@ -24,6 +24,7 @@ public:
     ~Scene();
 
     void addModel(Model *model);
+    void addModels(std::vector<Model *> models);
 
     void setProjectionMatrix(glm::mat4 projectionMatrix);
 
