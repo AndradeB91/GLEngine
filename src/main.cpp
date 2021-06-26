@@ -19,6 +19,7 @@
 #include "SpotLight.h"
 #include "FlashLight.h"
 #include "Scene.h"
+#include "Loader.h"
 
 void calcAverageNormals(unsigned int *indices, unsigned int indiceCount, GLfloat *vertices, unsigned int verticeCount,
                         unsigned int vLength, unsigned int normalOffset)
@@ -56,6 +57,38 @@ void calcAverageNormals(unsigned int *indices, unsigned int indiceCount, GLfloat
         vertices[nOffset + 1] = vec.y;
         vertices[nOffset + 2] = vec.z;
     }
+}
+
+std::vector<Model *> createXWing()
+{
+    static const char *vertexShader = "shaders/textured/shader.vert";
+    static const char *fragmentShader = "shaders/textured/shader.frag";
+
+    Loader loader = Loader();
+    loader.loadObj("objs/x-wing.obj");
+
+    std::vector<Model *> modelsList;
+
+    std::vector<Mesh *> meshList = loader.getMeshList();
+    std::vector<Texture *> textureList = loader.getTextureList();
+    std::vector<unsigned int> meshToTex = loader.getMeshToTex();
+
+    for (size_t i = 0; i < meshList.size(); i++)
+    {
+        glm::mat4 modelMatrix(1.0f);
+        modelMatrix = glm::translate(modelMatrix, glm::vec3(-8.0f, 0.0f, 8.0f));
+        modelMatrix = glm::scale(modelMatrix, glm::vec3(0.006f, 0.006f, 0.006f));
+
+        Model *model = new Model(vertexShader, fragmentShader);
+        unsigned int materialIndex = meshToTex[i];
+        model->setTexture(textureList[materialIndex]);
+        model->setMesh(meshList[i]);
+        model->setModelMatrix(modelMatrix);
+
+        modelsList.push_back(model);
+    }
+
+    return modelsList;
 }
 
 Model *createFloor()
@@ -126,7 +159,7 @@ Model *createPyramidWithoutTexture()
 
     model->setModelMatrix(modelMatrix);
     model->setMaterial(material);
-    model->setColour(1.0f, 1.0f, 0.0f);
+    model->setColour(0.8f, 0.8f, 0.8f);
 
     return model;
 }
@@ -180,21 +213,21 @@ int main()
     Camera camera = Camera();
 
     DirectionalLight directionalLight = DirectionalLight(1.0f, 1.0f, 1.0f,
-                                                         0.1f, 0.3f,
+                                                         0.0f, 0.2f,
                                                          0.0f, 0.0f, -1.0f);
 
     PointLight pointLight1 = PointLight(0.0f, 1.0f, 0.0f,
-                                        0.1f, 1.0f,
+                                        0.01f, 1.0f,
                                         -4.0f, 2.0f, 0.0f,
                                         0.3f, 0.2f, 0.1f);
 
     PointLight pointLight2 = PointLight(1.0f, 0.0f, 0.0f,
-                                        0.1f, 1.0f,
+                                        0.01f, 1.0f,
                                         4.0f, 2.0f, 0.0f,
                                         0.3f, 0.2f, 0.1f);
 
     PointLight pointLight3 = PointLight(0.0f, 0.0f, 1.0f,
-                                        0.1f, 1.0f,
+                                        0.01f, 1.0f,
                                         0.0f, 2.0f, -10.0f,
                                         0.3f, 0.2f, 0.1f);
 
@@ -219,8 +252,9 @@ int main()
 
     Scene scene = Scene();
 
-    scene.addModel(createPyramidWithoutTexture());
+    // scene.addModel(createPyramidWithoutTexture());
     scene.addModel(createFloor());
+    scene.addModels(createXWing());
 
     scene.setProjectionMatrix(projection);
     scene.setDirectionalLight(directionalLight);
