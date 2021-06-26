@@ -59,6 +59,18 @@ Model::Model(const char *vertexShader,
     this->_colour = glm::vec3(1.0f, 1.0f, 1.0f);
 }
 
+Model::Model(const char *vertexShader,
+             const char *fragmentShader)
+{
+    this->_shader = new Shader();
+    this->_shader->createFromFiles(vertexShader, fragmentShader);
+    this->_mesh = new Mesh();
+    this->_texture = NULL;
+    this->_material = new Material();
+    this->_modelMatrix = glm::mat4(1.0f);
+    this->_colour = glm::vec3(1.0f, 1.0f, 1.0f);
+}
+
 void Model::setModelMatrix(glm::mat4 modelMatrix)
 {
     this->_modelMatrix = modelMatrix;
@@ -107,6 +119,16 @@ void Model::setColour(GLfloat red, GLfloat green, GLfloat blue)
 glm::vec3 Model::getColour()
 {
     return this->_colour;
+}
+
+void Model::setMesh(Mesh *mesh)
+{
+    this->_mesh = mesh;
+}
+
+Mesh *Model::getMesh()
+{
+    return this->_mesh;
 }
 
 void Model::prepareToRender()

@@ -11,6 +11,9 @@ class Model
 {
 public:
     Model(const char *vertexShader,
+          const char *fragmentShader);
+
+    Model(const char *vertexShader,
           const char *fragmentShader,
           const char *texturePath,
           GLfloat *vertices,
@@ -41,6 +44,9 @@ public:
 
     void setColour(GLfloat red, GLfloat green, GLfloat blue);
     glm::vec3 getColour();
+
+    void setMesh(Mesh *mesh);
+    Mesh *getMesh();
 
     void prepareToRender();
     void render();
