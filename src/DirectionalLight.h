@@ -18,6 +18,8 @@ public:
 
     glm::vec3 getDirection();
 
+    void setDirection(glm::vec3 direction);
+
     ~DirectionalLight();
 
 private:
