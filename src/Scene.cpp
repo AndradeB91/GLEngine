@@ -3,7 +3,7 @@
 Scene::Scene()
 {
     this->_projectionMatrix = glm::mat4(1.0f);
-    this->_directionalLight = DirectionalLight();
+    this->_directionalLight = new DirectionalLight();
     this->_camera = new Camera();
     this->_flashLight = NULL;
 }
@@ -26,7 +26,7 @@ void Scene::setProjectionMatrix(glm::mat4 projectionMatrix)
     this->_projectionMatrix = projectionMatrix;
 }
 
-void Scene::setDirectionalLight(DirectionalLight directionalLight)
+void Scene::setDirectionalLight(DirectionalLight *directionalLight)
 {
     this->_directionalLight = directionalLight;
 }
@@ -37,14 +37,14 @@ void Scene::setFlashLight(FlashLight *flashLight)
     this->_flashLight = flashLight;
 }
 
-void Scene::addPointLight(PointLight pointLight)
+void Scene::addPointLight(PointLight *pointLight)
 {
     if (this->_pointLights.size() > MAX_POINT_LIGHTS)
     {
         return;
     }
 
-    this->_pointLights.push_back(&pointLight);
+    this->_pointLights.push_back(pointLight);
 }
 
 void Scene::addSpotLight(SpotLight *spotLight)
@@ -64,12 +64,12 @@ void Scene::setCameraPointer(Camera *camera)
 
 void Scene::renderDirectionalLight(Shader *shader)
 {
-    DirectionalLight directionalLight = this->_directionalLight;
+    DirectionalLight *directionalLight = this->_directionalLight;
 
-    shader->setUniform3f("directionalLight.base.colour", directionalLight.getColour());
-    shader->setUniform1f("directionalLight.base.ambientIntensity", directionalLight.getAmbientIntensity());
-    shader->setUniform1f("directionalLight.base.diffuseIntensity", directionalLight.getDiffuseIntensity());
-    shader->setUniform3f("directionalLight.direction", directionalLight.getDirection());
+    shader->setUniform3f("directionalLight.base.colour", directionalLight->getColour());
+    shader->setUniform1f("directionalLight.base.ambientIntensity", directionalLight->getAmbientIntensity());
+    shader->setUniform1f("directionalLight.base.diffuseIntensity", directionalLight->getDiffuseIntensity());
+    shader->setUniform3f("directionalLight.direction", directionalLight->getDirection());
 }
 
 void Scene::renderPointLights(Shader *shader)

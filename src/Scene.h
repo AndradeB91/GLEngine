@@ -28,9 +28,9 @@ public:
 
     void setProjectionMatrix(glm::mat4 projectionMatrix);
 
-    void setDirectionalLight(DirectionalLight directionalLight);
+    void setDirectionalLight(DirectionalLight *directionalLight);
     void setFlashLight(FlashLight *flashLight);
-    void addPointLight(PointLight pointLight);
+    void addPointLight(PointLight *pointLight);
     void addSpotLight(SpotLight *spotLight);
 
     void setCameraPointer(Camera *camera);
@@ -42,7 +42,7 @@ private:
 
     glm::mat4 _projectionMatrix;
 
-    DirectionalLight _directionalLight;
+    DirectionalLight *_directionalLight;
     FlashLight *_flashLight;
     std::vector<PointLight *> _pointLights;
     std::vector<SpotLight *> _spotLights;
