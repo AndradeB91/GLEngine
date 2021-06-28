@@ -21,8 +21,12 @@
 #include "Scene.h"
 #include "Loader.h"
 
-void calcAverageNormals(unsigned int *indices, unsigned int indiceCount, GLfloat *vertices, unsigned int verticeCount,
-                        unsigned int vLength, unsigned int normalOffset)
+void calcAverageNormals(unsigned int *indices,
+                        unsigned int indiceCount,
+                        GLfloat *vertices,
+                        unsigned int verticeCount,
+                        unsigned int vLength,
+                        unsigned int normalOffset)
 {
     for (size_t i = 0; i < indiceCount; i += 3)
     {
@@ -59,31 +63,27 @@ void calcAverageNormals(unsigned int *indices, unsigned int indiceCount, GLfloat
     }
 }
 
-std::vector<Model *> createXWing()
+std::vector<Model *> createBlock()
 {
-    static const char *vertexShader = "shaders/textured/shader.vert";
-    static const char *fragmentShader = "shaders/textured/shader.frag";
+    static const char *vertexShader = "shaders/coloured-flat/shader.vert";
+    static const char *fragmentShader = "shaders/coloured-flat/shader.frag";
 
     Loader loader = Loader();
-    loader.loadObj("objs/x-wing.obj");
+    loader.loadObj("objs/block-noised.obj");
 
     std::vector<Model *> modelsList;
-
     std::vector<Mesh *> meshList = loader.getMeshList();
-    std::vector<Texture *> textureList = loader.getTextureList();
-    std::vector<unsigned int> meshToTex = loader.getMeshToTex();
 
     for (size_t i = 0; i < meshList.size(); i++)
     {
         glm::mat4 modelMatrix(1.0f);
-        modelMatrix = glm::translate(modelMatrix, glm::vec3(-8.0f, 0.0f, 8.0f));
-        modelMatrix = glm::scale(modelMatrix, glm::vec3(0.006f, 0.006f, 0.006f));
+        modelMatrix = glm::scale(modelMatrix, glm::vec3(0.1f, 0.1f, 0.1f));
 
         Model *model = new Model(vertexShader, fragmentShader);
-        unsigned int materialIndex = meshToTex[i];
-        model->setTexture(textureList[materialIndex]);
+
         model->setMesh(meshList[i]);
         model->setModelMatrix(modelMatrix);
+        model->setColourRGB(234, 197, 138);
 
         modelsList.push_back(model);
     }
@@ -159,7 +159,7 @@ Model *createPyramidWithoutTexture()
 
     model->setModelMatrix(modelMatrix);
     model->setMaterial(material);
-    model->setColour(0.8f, 0.8f, 0.8f);
+    model->setColourPercentage(0.8f, 0.8f, 0.8f);
 
     return model;
 }
@@ -212,38 +212,38 @@ int main()
 
     Camera camera = Camera();
 
-    DirectionalLight directionalLight = DirectionalLight(1.0f, 1.0f, 1.0f,
-                                                         0.0f, 0.2f,
-                                                         0.0f, 0.0f, -1.0f);
+    DirectionalLight *directionalLight = new DirectionalLight(1.0f, 1.0f, 1.0f,
+                                                              0.2f, 0.7f,
+                                                              -3.0f, -3.0f, -3.0f);
 
-    PointLight pointLight1 = PointLight(0.0f, 1.0f, 0.0f,
-                                        0.01f, 1.0f,
-                                        -4.0f, 2.0f, 0.0f,
-                                        0.3f, 0.2f, 0.1f);
+    PointLight *pointLight1 = new PointLight(1.0f, 1.0f, 1.0f,
+                                             0.1f, 0.7f,
+                                             -4.0f, 2.0f, 0.0f,
+                                             0.8f, 0.2f, 0.1f);
 
-    PointLight pointLight2 = PointLight(1.0f, 0.0f, 0.0f,
-                                        0.01f, 1.0f,
-                                        4.0f, 2.0f, 0.0f,
-                                        0.3f, 0.2f, 0.1f);
+    PointLight *pointLight2 = new PointLight(0.5f, 0.0f, 1.0f,
+                                             0.01f, 1.0f,
+                                             4.0f, 2.0f, 0.0f,
+                                             0.3f, 0.2f, 0.1f);
 
-    PointLight pointLight3 = PointLight(0.0f, 0.0f, 1.0f,
-                                        0.01f, 1.0f,
-                                        0.0f, 2.0f, -10.0f,
-                                        0.3f, 0.2f, 0.1f);
+    PointLight *pointLight3 = new PointLight(0.0f, 0.0f, 1.0f,
+                                             0.01f, 1.0f,
+                                             0.0f, 2.0f, -10.0f,
+                                             0.3f, 0.2f, 0.1f);
 
-    FlashLight *flashLight = new FlashLight(1.0f, 1.0f, 1.0f,
+    FlashLight *flashLight = new FlashLight(0.8f, 0.8f, 0.8f,
                                             0.0f, 2.0f,
                                             0.0f, 0.0f, 0.0f,
                                             0.0f, -1.0f, 0.0f,
                                             1.0f, 0.0f, 0.0f,
-                                            10.0f);
+                                            200.0f);
 
     SpotLight *spotLight2 = new SpotLight(1.0f, 1.0f, 1.0f,
-                                          0.0f, 1.0f,
-                                          0.0f, 0.0f, 0.0f,
-                                          -5.0f, -1.0f, 0.0f,
+                                          0.0f, 0.5f,
+                                          0.0f, 10.0f, 0.0f,
+                                          0.0f, -1.0f, 0.0f,
                                           1.0f, 0.0f, 0.0f,
-                                          20.0f);
+                                          10.0f);
 
     glm::mat4 projection = glm::perspective(glm::radians(45.0f),
                                             (GLfloat)mainWindow.getBufferWidth() / mainWindow.getBufferHeight(),
@@ -252,19 +252,11 @@ int main()
 
     Scene scene = Scene();
 
-    // scene.addModel(createPyramidWithoutTexture());
-    scene.addModel(createFloor());
-    scene.addModels(createXWing());
+    scene.addModels(createBlock());
 
     scene.setProjectionMatrix(projection);
+
     scene.setDirectionalLight(directionalLight);
-
-    scene.addPointLight(pointLight1);
-    scene.addPointLight(pointLight2);
-    scene.addPointLight(pointLight3);
-
-    scene.addSpotLight(spotLight2);
-    scene.setFlashLight(flashLight);
 
     scene.setCameraPointer(&camera);
 
@@ -278,11 +270,13 @@ int main()
         glfwPollEvents();
 
         // Clear window
-        glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+        glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
         camera.listenKeys(mainWindow.getKeys(), deltaTime);
         camera.listenMouse(mainWindow.getXDelta(), mainWindow.getYDelta());
+
+        directionalLight->setDirection(camera.getDirection());
 
         scene.render();
 
