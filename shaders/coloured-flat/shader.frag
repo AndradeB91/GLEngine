@@ -1,6 +1,6 @@
 #version 330
 
-in vec3 normal;
+flat in vec3 normal;
 in vec3 fragPos;
 in vec4 vCol;
 
