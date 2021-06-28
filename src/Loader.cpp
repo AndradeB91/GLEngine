@@ -69,10 +69,10 @@ void Loader::loadMesh(aiMesh *mesh, const aiScene *scene)
             vertices.insert(vertices.end(), {mesh->mTextureCoords[0][i].x,
                                              mesh->mTextureCoords[0][i].y});
         }
-        else
-        {
-            vertices.insert(vertices.end(), {0.0f, 0.0f});
-        }
+        // else
+        // {
+        //     vertices.insert(vertices.end(), {0.0f, 0.0f});
+        // }
 
         vertices.insert(vertices.end(), {-mesh->mNormals[i].x,
                                          -mesh->mNormals[i].y,
@@ -91,16 +91,32 @@ void Loader::loadMesh(aiMesh *mesh, const aiScene *scene)
 
     Mesh *newMesh = new Mesh();
 
-    newMesh->createMesh(&vertices[0],
-                        &indices[0],
-                        vertices.size(),
-                        indices.size(),
-                        3,
-                        (GLint[]){0, 1, 2},
-                        (GLint[]){3, 2, 3},
-                        (GLenum[]){GL_FLOAT, GL_FLOAT, GL_FLOAT},
-                        8,
-                        (unsigned int[]){0, 3, 5});
+    if (mesh->mTextureCoords[0])
+    {
+        newMesh->createMesh(&vertices[0],
+                            &indices[0],
+                            vertices.size(),
+                            indices.size(),
+                            3,
+                            (GLint[]){0, 1, 2},
+                            (GLint[]){3, 2, 3},
+                            (GLenum[]){GL_FLOAT, GL_FLOAT, GL_FLOAT},
+                            8,
+                            (unsigned int[]){0, 3, 5});
+    }
+    else
+    {
+        newMesh->createMesh(&vertices[0],
+                            &indices[0],
+                            vertices.size(),
+                            indices.size(),
+                            2,
+                            (GLint[]){0, 1},
+                            (GLint[]){3, 3},
+                            (GLenum[]){GL_FLOAT, GL_FLOAT},
+                            6,
+                            (unsigned int[]){0, 3});
+    }
 
     this->_meshList.push_back(newMesh);
     this->_meshToTex.push_back(mesh->mMaterialIndex);
