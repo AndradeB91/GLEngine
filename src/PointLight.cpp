@@ -30,6 +30,11 @@ PointLight::PointLight(GLfloat red,
     this->_exponent = exponent;
 }
 
+void PointLight::setPosition(glm::vec3 position)
+{
+    this->_position = position;
+}
+
 glm::vec3 PointLight::getPosition()
 {
     return this->_position;

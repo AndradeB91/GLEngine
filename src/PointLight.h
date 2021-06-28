@@ -19,6 +19,7 @@ public:
                GLfloat linear,
                GLfloat exponent);
 
+    void setPosition(glm::vec3 position);
     glm::vec3 getPosition();
     GLfloat getConstant();
     GLfloat getLinear();
