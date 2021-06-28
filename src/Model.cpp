@@ -111,9 +111,16 @@ Texture *Model::getTexture()
     return this->_texture;
 }
 
-void Model::setColour(GLfloat red, GLfloat green, GLfloat blue)
+void Model::setColourPercentage(GLfloat redPercentage, GLfloat greenPercentage, GLfloat bluePercentage)
 {
-    this->_colour = glm::vec3(red, green, blue);
+    this->_colour = glm::vec3(redPercentage, greenPercentage, bluePercentage);
+}
+
+void Model::setColourRGB(GLint red, GLint green, GLint blue)
+{
+    this->_colour = glm::vec3((GLfloat)red / 256.0f,
+                              (GLfloat)green / 256.0f,
+                              (GLfloat)blue / 256.0f);
 }
 
 glm::vec3 Model::getColour()
