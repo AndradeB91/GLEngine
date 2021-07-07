@@ -97,7 +97,18 @@ void Camera::listenMouse(GLfloat xDelta, GLfloat yDelta)
     yDelta *= this->_turnSpeed;
 
     this->_yaw += xDelta;
-    this->_pitch = std::min(this->_pitch + yDelta, 89.0f);
+
+    this->_pitch += yDelta;
+
+    if (this->_pitch > 89.0f)
+    {
+        this->_pitch = 89.0f;
+    }
+
+    if (this->_pitch < -89.0f)
+    {
+        this->_pitch = -89.0f;
+    }
 
     this->update();
 }
