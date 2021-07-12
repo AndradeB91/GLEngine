@@ -13,8 +13,13 @@ public:
 
     int initialize();
 
+    GLFWwindow *getWindowPointer();
+
     GLfloat getBufferWidth();
     GLfloat getBufferHeight();
+
+    GLint getWidth();
+    GLint getHeight();
 
     bool getShouldClose();
 

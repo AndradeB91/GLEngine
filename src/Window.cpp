@@ -126,6 +126,11 @@ void Window::handleMouse(GLFWwindow *window, double xPos, double yPos)
     windowPointer->_lastY = yPos;
 }
 
+GLFWwindow *Window::getWindowPointer()
+{
+    return this->_mainWindow;
+}
+
 GLfloat Window::getBufferWidth()
 {
     return this->_bufferWidth;
@@ -134,6 +139,16 @@ GLfloat Window::getBufferWidth()
 GLfloat Window::getBufferHeight()
 {
     return this->_bufferHeight;
+}
+
+GLint Window::getWidth()
+{
+    return this->_width;
+}
+
+GLint Window::getHeight()
+{
+    return this->_height;
 }
 
 bool Window::getShouldClose()
