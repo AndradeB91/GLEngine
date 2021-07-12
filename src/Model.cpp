@@ -12,16 +12,16 @@ Model::Model(const char *vertexShader,
     this->_shader->createFromFiles(vertexShader, fragmentShader);
 
     this->_mesh = new Mesh();
-    this->_mesh->createMesh(vertices,
-                            indices,
-                            numOfVertices,
-                            numOfIndices,
-                            3,
-                            (GLint[]){0, 1, 2},
-                            (GLint[]){3, 2, 3},
-                            (GLenum[]){GL_FLOAT, GL_FLOAT, GL_FLOAT},
-                            8,
-                            (unsigned int[]){0, 3, 5});
+    this->_mesh->build(vertices,
+                       indices,
+                       numOfVertices,
+                       numOfIndices,
+                       3,
+                       (GLint[]){0, 1, 2},
+                       (GLint[]){3, 2, 3},
+                       (GLenum[]){GL_FLOAT, GL_FLOAT, GL_FLOAT},
+                       8,
+                       (unsigned int[]){0, 3, 5});
 
     this->_texture = new Texture(texturePath);
     this->_texture->loadTextureWithAlpha();
@@ -42,16 +42,16 @@ Model::Model(const char *vertexShader,
 
     this->_mesh = new Mesh();
 
-    this->_mesh->createMesh(vertices,
-                            indices,
-                            numOfVertices,
-                            numOfIndices,
-                            2,
-                            (GLint[]){0, 1},
-                            (GLint[]){3, 3},
-                            (GLenum[]){GL_FLOAT, GL_FLOAT},
-                            6,
-                            (unsigned int[]){0, 3});
+    this->_mesh->build(vertices,
+                       indices,
+                       numOfVertices,
+                       numOfIndices,
+                       2,
+                       (GLint[]){0, 1},
+                       (GLint[]){3, 3},
+                       (GLenum[]){GL_FLOAT, GL_FLOAT},
+                       6,
+                       (unsigned int[]){0, 3});
 
     this->_texture = NULL;
     this->_material = new Material();
@@ -138,6 +138,27 @@ Mesh *Model::getMesh()
     return this->_mesh;
 }
 
+void Model::setGeometry(Geometry geometry)
+{
+    this->_geometry = geometry;
+
+    for (size_t i = 0; i < this->_geometry.vertices.size(); i++)
+    {
+        Vertice vertice = this->_geometry.vertices[i];
+        glm::vec4 modifiedVertice = this->_modelMatrix * glm::vec4(vertice.coords.x,
+                                                                   vertice.coords.y,
+                                                                   vertice.coords.z,
+                                                                   1.0f);
+
+        this->_geometry.vertices[i] = Vertice(modifiedVertice.x, modifiedVertice.y, modifiedVertice.z);
+    }
+}
+
+Geometry Model::getGeometry()
+{
+    return this->_geometry;
+}
+
 void Model::prepareToRender()
 {
     if (this->_shader != NULL)
@@ -153,7 +174,7 @@ void Model::prepareToRender()
 
 void Model::render()
 {
-    this->_mesh->renderMesh();
+    this->_mesh->render();
 }
 
 Model::~Model()

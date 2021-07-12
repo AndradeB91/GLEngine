@@ -2,6 +2,7 @@
 
 #include "Shader.h"
 #include "Mesh.h"
+#include "Geometry.h"
 #include "Texture.h"
 #include "Material.h"
 
@@ -50,12 +51,16 @@ public:
       void setMesh(Mesh *mesh);
       Mesh *getMesh();
 
+      void setGeometry(Geometry geometry);
+      Geometry getGeometry();
+
       void prepareToRender();
       void render();
 
 private:
       Shader *_shader;
       Mesh *_mesh;
+      Geometry _geometry;
       Texture *_texture;
       Material *_material;
       glm::mat4 _modelMatrix;
