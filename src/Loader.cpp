@@ -39,6 +39,24 @@ void Loader::loadObj(const std::string &fileName)
     loadMaterials(scene);
 }
 
+Geometry Loader::loadObjGeometry(const std::string &fileName)
+{
+    Assimp::Importer importer;
+    const aiScene *scene = importer.ReadFile(fileName,
+                                             aiProcess_Triangulate |
+                                                 aiProcess_FlipUVs |
+                                                 aiProcess_GenSmoothNormals |
+                                                 aiProcess_JoinIdenticalVertices);
+
+    if (!scene)
+    {
+        printf("Model (%s) failed to load: %s", fileName.c_str(), importer.GetErrorString());
+        return Geometry();
+    }
+
+    return this->loadGeometry(scene->mMeshes[0]);
+}
+
 void Loader::loadNode(aiNode *node, const aiScene *scene)
 {
     for (size_t i = 0; i < node->mNumMeshes; i++)
@@ -52,6 +70,81 @@ void Loader::loadNode(aiNode *node, const aiScene *scene)
     }
 }
 
+Geometry Loader::loadGeometry(aiMesh *mesh)
+{
+    Geometry meshGeometry;
+
+    meshGeometry.setNumVertices(mesh->mNumVertices);
+
+    for (size_t i = 0; i < mesh->mNumVertices; i++)
+    {
+        meshGeometry.addVertice(mesh->mVertices[i].x,
+                                mesh->mVertices[i].y,
+                                mesh->mVertices[i].z);
+
+        meshGeometry.addNormal(-mesh->mNormals[i].x,
+                               -mesh->mNormals[i].y,
+                               -mesh->mNormals[i].z);
+    }
+
+    meshGeometry.setNumFaces(mesh->mNumFaces);
+
+    for (size_t i = 0; i < mesh->mNumFaces; i++)
+    {
+        aiFace face = mesh->mFaces[i];
+        meshGeometry.addFace(face.mIndices[0],
+                             face.mIndices[1],
+                             face.mIndices[2]);
+    }
+
+    return meshGeometry;
+}
+
+Mesh *Loader::geometryToMesh(Geometry geometry)
+{
+    std::vector<GLfloat> vertices;
+    std::vector<unsigned int> indices;
+
+    for (size_t i = 0; i < geometry.getNumVertices(); i++)
+    {
+        glm::vec3 verticeCoords = geometry.vertices[i].coords;
+
+        vertices.push_back(verticeCoords.x);
+        vertices.push_back(verticeCoords.y);
+        vertices.push_back(verticeCoords.z);
+
+        glm::vec3 normalCoords = geometry.normals[i].coords;
+
+        vertices.push_back(normalCoords.x);
+        vertices.push_back(normalCoords.y);
+        vertices.push_back(normalCoords.z);
+    }
+
+    for (size_t i = 0; i < geometry.getNumFaces(); i++)
+    {
+        Face face = geometry.faces[i];
+
+        indices.push_back(face.ind0);
+        indices.push_back(face.ind1);
+        indices.push_back(face.ind2);
+    }
+
+    Mesh *mesh = new Mesh();
+
+    mesh->build(&vertices[0],
+                &indices[0],
+                vertices.size(),
+                indices.size(),
+                2,
+                (GLint[]){0, 1},
+                (GLint[]){3, 3},
+                (GLenum[]){GL_FLOAT, GL_FLOAT},
+                6,
+                (unsigned int[]){0, 3});
+
+    return mesh;
+}
+
 void Loader::loadMesh(aiMesh *mesh, const aiScene *scene)
 {
     std::vector<GLfloat> vertices;
@@ -59,24 +152,19 @@ void Loader::loadMesh(aiMesh *mesh, const aiScene *scene)
 
     for (size_t i = 0; i < mesh->mNumVertices; i++)
     {
-
-        vertices.insert(vertices.end(), {mesh->mVertices[i].x,
-                                         mesh->mVertices[i].y,
-                                         mesh->mVertices[i].z});
+        vertices.push_back(mesh->mVertices[i].x);
+        vertices.push_back(mesh->mVertices[i].y);
+        vertices.push_back(mesh->mVertices[i].z);
 
         if (mesh->mTextureCoords[0])
         {
-            vertices.insert(vertices.end(), {mesh->mTextureCoords[0][i].x,
-                                             mesh->mTextureCoords[0][i].y});
+            vertices.push_back(mesh->mTextureCoords[0][i].x);
+            vertices.push_back(mesh->mTextureCoords[0][i].y);
         }
-        // else
-        // {
-        //     vertices.insert(vertices.end(), {0.0f, 0.0f});
-        // }
 
-        vertices.insert(vertices.end(), {-mesh->mNormals[i].x,
-                                         -mesh->mNormals[i].y,
-                                         -mesh->mNormals[i].z});
+        vertices.push_back(-mesh->mNormals[i].x);
+        vertices.push_back(-mesh->mNormals[i].y);
+        vertices.push_back(-mesh->mNormals[i].z);
     }
 
     for (size_t i = 0; i < mesh->mNumFaces; i++)
@@ -93,29 +181,29 @@ void Loader::loadMesh(aiMesh *mesh, const aiScene *scene)
 
     if (mesh->mTextureCoords[0])
     {
-        newMesh->createMesh(&vertices[0],
-                            &indices[0],
-                            vertices.size(),
-                            indices.size(),
-                            3,
-                            (GLint[]){0, 1, 2},
-                            (GLint[]){3, 2, 3},
-                            (GLenum[]){GL_FLOAT, GL_FLOAT, GL_FLOAT},
-                            8,
-                            (unsigned int[]){0, 3, 5});
+        newMesh->build(&vertices[0],
+                       &indices[0],
+                       vertices.size(),
+                       indices.size(),
+                       3,
+                       (GLint[]){0, 1, 2},
+                       (GLint[]){3, 2, 3},
+                       (GLenum[]){GL_FLOAT, GL_FLOAT, GL_FLOAT},
+                       8,
+                       (unsigned int[]){0, 3, 5});
     }
     else
     {
-        newMesh->createMesh(&vertices[0],
-                            &indices[0],
-                            vertices.size(),
-                            indices.size(),
-                            2,
-                            (GLint[]){0, 1},
-                            (GLint[]){3, 3},
-                            (GLenum[]){GL_FLOAT, GL_FLOAT},
-                            6,
-                            (unsigned int[]){0, 3});
+        newMesh->build(&vertices[0],
+                       &indices[0],
+                       vertices.size(),
+                       indices.size(),
+                       2,
+                       (GLint[]){0, 1},
+                       (GLint[]){3, 3},
+                       (GLenum[]){GL_FLOAT, GL_FLOAT},
+                       6,
+                       (unsigned int[]){0, 3});
     }
 
     this->_meshList.push_back(newMesh);
@@ -161,7 +249,7 @@ void Loader::loadMaterials(const aiScene *scene)
     }
 }
 
-void Loader::clearModel()
+void Loader::clear()
 {
     for (size_t i = 0; i < this->_meshList.size(); i++)
     {

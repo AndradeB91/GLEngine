@@ -8,6 +8,7 @@
 
 #include "GL/glew.h"
 
+#include "Geometry.h"
 #include "Mesh.h"
 #include "Texture.h"
 
@@ -17,7 +18,11 @@ public:
     Loader();
 
     void loadObj(const std::string &fileName);
-    void clearModel();
+
+    Geometry loadObjGeometry(const std::string &fileName);
+    Mesh *geometryToMesh(Geometry geometry);
+
+    void clear();
 
     std::vector<Mesh *> getMeshList();
     std::vector<Texture *> getTextureList();
@@ -29,6 +34,8 @@ private:
     void loadNode(aiNode *node, const aiScene *scene);
     void loadMesh(aiMesh *mesh, const aiScene *scene);
     void loadMaterials(const aiScene *scene);
+
+    Geometry loadGeometry(aiMesh *mesh);
 
     std::vector<Mesh *> _meshList;
     std::vector<Texture *> _textureList;
