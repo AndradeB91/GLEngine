@@ -7,20 +7,20 @@ class Mesh
 public:
     Mesh();
 
-    void createMesh(GLfloat *vertices,
-                    unsigned int *indices,
-                    unsigned int numOfVertices,
-                    unsigned int numOfIndices,
-                    unsigned int layouts,
-                    GLint layoutsLocations[],
-                    GLint sizes[],
-                    GLenum layoutsTypes[],
-                    unsigned int lineSize,
-                    unsigned int shifts[]);
+    void build(GLfloat *vertices,
+               unsigned int *indices,
+               unsigned int numOfVertices,
+               unsigned int numOfIndices,
+               unsigned int layouts,
+               GLint layoutsLocations[],
+               GLint sizes[],
+               GLenum layoutsTypes[],
+               unsigned int lineSize,
+               unsigned int shifts[]);
 
-    void renderMesh();
+    void render();
 
-    void clearMesh();
+    void clear();
 
     ~Mesh();
 
