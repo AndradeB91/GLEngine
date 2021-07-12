@@ -1,5 +1,9 @@
 #include "Camera.h"
 
+const float RESET_TIME_MAX = 1.0f;
+const float RESET_TIME_STEP = 0.05f;
+const float MAX_ANGLE = 89.0f;
+
 Camera::Camera(glm::vec3 position,
                glm::vec3 up,
                GLfloat yaw,
@@ -7,6 +11,8 @@ Camera::Camera(glm::vec3 position,
                GLfloat movementSpeed,
                GLfloat turnSpeed)
 {
+    this->_cursorEnabled = false;
+    this->_resetTime = 0.0f;
     this->_position = position;
     this->_worldUp = up;
     this->_yaw = yaw;
@@ -34,6 +40,19 @@ glm::vec3 Camera::getDirection()
     return glm::normalize(this->_front);
 }
 
+glm::mat4 Camera::getOrientation()
+{
+    glm::mat4 orientation = glm::mat4(1.0f);
+    orientation = glm::rotate(orientation, glm::radians(this->_pitch), glm::vec3(1, 0, 0));
+    orientation = glm::rotate(orientation, glm::radians(this->_yaw), glm::vec3(0, 1, 0));
+    return orientation;
+}
+
+glm::mat4 Camera::getView()
+{
+    return this->getOrientation() * glm::translate(glm::mat4(1.0f), -this->_position);
+}
+
 void Camera::update()
 {
     this->_front.x = cos(glm::radians(this->_yaw)) * cos(glm::radians(this->_pitch));
@@ -44,9 +63,11 @@ void Camera::update()
     this->_right = glm::normalize(glm::cross(this->_front, this->_worldUp));
 
     this->_up = glm::normalize(glm::cross(this->_right, this->_front));
+
+    this->_resetTime = std::max(0.0f, this->_resetTime - RESET_TIME_STEP);
 }
 
-void Camera::listenKeys(bool *keys, GLfloat deltaTime)
+void Camera::listenKeys(Window *window, bool *keys, GLfloat deltaTime)
 {
     GLfloat velocity = this->_movementSpeed * deltaTime;
 
@@ -87,11 +108,32 @@ void Camera::listenKeys(bool *keys, GLfloat deltaTime)
 
     if (keys[GLFW_KEY_MINUS])
     {
-        this->_movementSpeed = std::max(0.0f, this->_movementSpeed - 0.2f);
+        this->_movementSpeed = std::max(0.1f, this->_movementSpeed - 0.2f);
+    }
+
+    if (keys[GLFW_KEY_TAB] && this->_resetTime == 0.0f)
+    {
+        if (this->_cursorEnabled)
+        {
+            glfwSetInputMode(window->getWindowPointer(), GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+            this->_turnSpeed = 0.1f;
+        }
+        else
+        {
+            glfwSetInputMode(window->getWindowPointer(), GLFW_CURSOR, GLFW_CURSOR_NORMAL);
+            glfwSetCursorPos(window->getWindowPointer(),
+                             window->getWidth() / 2.0f,
+                             window->getHeight() / 2.0f);
+
+            this->_turnSpeed = 0;
+        }
+
+        this->_resetTime = RESET_TIME_MAX;
+        this->_cursorEnabled = !this->_cursorEnabled;
     }
 }
 
-void Camera::listenMouse(GLfloat xDelta, GLfloat yDelta)
+void Camera::listenMouseMovement(Window *window, GLfloat xDelta, GLfloat yDelta)
 {
     xDelta *= this->_turnSpeed;
     yDelta *= this->_turnSpeed;
@@ -100,17 +142,34 @@ void Camera::listenMouse(GLfloat xDelta, GLfloat yDelta)
 
     this->_pitch += yDelta;
 
-    if (this->_pitch > 89.0f)
+    if (this->_pitch > MAX_ANGLE)
     {
-        this->_pitch = 89.0f;
+        this->_pitch = MAX_ANGLE;
     }
 
-    if (this->_pitch < -89.0f)
+    if (this->_pitch < -MAX_ANGLE)
     {
-        this->_pitch = -89.0f;
+        this->_pitch = -MAX_ANGLE;
     }
 
     this->update();
+}
+
+void Camera::listenMousePicker(Window *window, MousePicker mousePicker)
+{
+    if (this->_cursorEnabled &&
+        this->_resetTime == 0.0f &&
+        glfwGetMouseButton(window->getWindowPointer(), GLFW_MOUSE_BUTTON_1))
+    {
+        double mouseX, mouseY;
+        glfwGetCursorPos(window->getWindowPointer(), &mouseX, &mouseY);
+
+        GLint index = mousePicker.intersects(this->_position,
+                                             this->calculateViewMatrix(),
+                                             (GLfloat)mouseX, (GLfloat)mouseY);
+        printf("chosen index: %d\n", index);
+        this->_resetTime = RESET_TIME_MAX;
+    }
 }
 
 Camera::~Camera()

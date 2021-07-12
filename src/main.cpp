@@ -20,6 +20,8 @@
 #include "FlashLight.h"
 #include "Scene.h"
 #include "Loader.h"
+#include "Geometry.h"
+#include "MousePicker.h"
 
 void calcAverageNormals(unsigned int *indices,
                         unsigned int indiceCount,
@@ -63,32 +65,63 @@ void calcAverageNormals(unsigned int *indices,
     }
 }
 
-std::vector<Model *> createBlock()
+// std::vector<Model *> createBlock()
+// {
+//     static const char *vertexShader = "shaders/coloured-flat/shader.vert";
+//     static const char *fragmentShader = "shaders/coloured-flat/shader.frag";
+
+//     Loader loader = Loader();
+//     loader.loadObj("objs/block-noised.obj");
+
+//     // Geometry geo = loader.loadObjGeometry("objs/block-noised.obj");
+//     // printf("%lu, %lu", geo.getVertices().size(), geo.getFaces().size());
+
+//     std::vector<Model *> modelsList;
+//     std::vector<Mesh *> meshList = loader.getMeshList();
+
+//     for (size_t i = 0; i < meshList.size(); i++)
+//     {
+//         glm::mat4 modelMatrix(1.0f);
+//         modelMatrix = glm::scale(modelMatrix, glm::vec3(0.1f, 0.1f, 0.1f));
+
+//         Model *model = new Model(vertexShader, fragmentShader);
+
+//         model->setMesh(meshList[i]);
+//         model->setModelMatrix(modelMatrix);
+//         model->setColourRGB(234, 197, 138);
+
+//         modelsList.push_back(model);
+//     }
+
+//     return modelsList;
+// }
+
+Model *createBlock()
 {
     static const char *vertexShader = "shaders/coloured-flat/shader.vert";
     static const char *fragmentShader = "shaders/coloured-flat/shader.frag";
 
     Loader loader = Loader();
-    loader.loadObj("objs/block-noised.obj");
+    Geometry geometry = loader.loadObjGeometry("objs/simplex2.obj");
 
-    std::vector<Model *> modelsList;
-    std::vector<Mesh *> meshList = loader.getMeshList();
+    // for (size_t i = 0; i < 10; i++)
+    // {
+    //     // geometry.faces.erase(geometry.faces.begin() + i);
+    //     geometry.faces.pop_back();
+    // }
 
-    for (size_t i = 0; i < meshList.size(); i++)
-    {
-        glm::mat4 modelMatrix(1.0f);
-        modelMatrix = glm::scale(modelMatrix, glm::vec3(0.1f, 0.1f, 0.1f));
+    Mesh *mesh = loader.geometryToMesh(geometry);
 
-        Model *model = new Model(vertexShader, fragmentShader);
+    glm::mat4 modelMatrix(1.0f);
+    modelMatrix = glm::scale(modelMatrix, glm::vec3(0.5f, 0.5f, 0.5f));
 
-        model->setMesh(meshList[i]);
-        model->setModelMatrix(modelMatrix);
-        model->setColourRGB(234, 197, 138);
+    Model *model = new Model(vertexShader, fragmentShader);
+    model->setModelMatrix(modelMatrix);
+    model->setMesh(mesh);
+    model->setGeometry(geometry);
+    model->setColourRGB(234, 197, 138);
 
-        modelsList.push_back(model);
-    }
-
-    return modelsList;
+    return model;
 }
 
 Model *createFloor()
@@ -206,8 +239,9 @@ Model *createPyramid()
 int main()
 {
     GLfloat deltaTime = 0.0f, lastTime = 0.0f;
-
-    Window mainWindow = Window(1366, 768);
+    GLint screenWidth = 768;
+    GLint screenHeight = 768;
+    Window mainWindow = Window(screenWidth, screenHeight);
     mainWindow.initialize();
 
     Camera camera = Camera();
@@ -249,16 +283,19 @@ int main()
                                             (GLfloat)mainWindow.getBufferWidth() / mainWindow.getBufferHeight(),
                                             0.1f,
                                             100.0f);
+    Model *block = createBlock();
 
     Scene scene = Scene();
-
-    scene.addModels(createBlock());
-
+    scene.addModel(createFloor());
+    scene.addModel(block);
     scene.setProjectionMatrix(projection);
-
     scene.setDirectionalLight(directionalLight);
-
     scene.setCameraPointer(&camera);
+
+    MousePicker mousePicker = MousePicker(screenWidth,
+                                          screenHeight,
+                                          projection,
+                                          block->getGeometry());
 
     while (!mainWindow.getShouldClose())
     {
@@ -273,8 +310,9 @@ int main()
         glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-        camera.listenKeys(mainWindow.getKeys(), deltaTime);
-        camera.listenMouse(mainWindow.getXDelta(), mainWindow.getYDelta());
+        camera.listenKeys(&mainWindow, mainWindow.getKeys(), deltaTime);
+        camera.listenMouseMovement(&mainWindow, mainWindow.getXDelta(), mainWindow.getYDelta());
+        camera.listenMousePicker(&mainWindow, mousePicker);
 
         directionalLight->setDirection(camera.getDirection());
 

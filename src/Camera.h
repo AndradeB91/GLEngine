@@ -8,6 +8,9 @@
 
 #include <GLFW/glfw3.h>
 
+#include "Window.h"
+#include "MousePicker.h"
+
 class Camera
 {
 public:
@@ -19,13 +22,17 @@ public:
         GLfloat movementSpeed = 3.0f,
         GLfloat turnSpeed = 0.1f);
 
-    void listenKeys(bool *keys, GLfloat deltaTime);
-    void listenMouse(GLfloat xDelta, GLfloat yDelta);
+    void listenKeys(Window *window, bool *keys, GLfloat deltaTime);
+    void listenMouseMovement(Window *window, GLfloat xDelta, GLfloat yDelta);
+    void listenMousePicker(Window *window, MousePicker mousePicker);
 
     glm::vec3 getPosition();
     glm::vec3 getDirection();
 
     glm::mat4 calculateViewMatrix();
+
+    glm::mat4 getOrientation();
+    glm::mat4 getView();
 
     ~Camera();
 
@@ -34,6 +41,9 @@ private:
 
     GLfloat _yaw, _pitch;
     GLfloat _movementSpeed, _turnSpeed;
+
+    GLboolean _cursorEnabled;
+    GLfloat _resetTime;
 
     void update();
 };
