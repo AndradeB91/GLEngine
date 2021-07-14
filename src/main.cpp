@@ -22,6 +22,7 @@
 #include "Loader.h"
 #include "Geometry.h"
 #include "MousePicker.h"
+#include "Gui.h"
 
 void calcAverageNormals(unsigned int *indices,
                         unsigned int indiceCount,
@@ -102,24 +103,23 @@ Model *createBlock()
     static const char *fragmentShader = "shaders/coloured-flat/shader.frag";
 
     Loader loader = Loader();
-    Geometry geometry = loader.loadObjGeometry("objs/simplex2.obj");
-
-    // for (size_t i = 0; i < 10; i++)
-    // {
-    //     // geometry.faces.erase(geometry.faces.begin() + i);
-    //     geometry.faces.pop_back();
-    // }
+    Geometry geometry = loader.loadObjGeometry("objs/block-noised.obj");
 
     Mesh *mesh = loader.geometryToMesh(geometry);
 
     glm::mat4 modelMatrix(1.0f);
-    modelMatrix = glm::scale(modelMatrix, glm::vec3(0.5f, 0.5f, 0.5f));
+    GLfloat scaleFactor = 0.06f;
+    modelMatrix = glm::scale(modelMatrix, glm::vec3(scaleFactor, scaleFactor, scaleFactor));
 
     Model *model = new Model(vertexShader, fragmentShader);
+    model->setName("block.obj");
     model->setModelMatrix(modelMatrix);
+    model->setScaleFactor(scaleFactor);
     model->setMesh(mesh);
     model->setGeometry(geometry);
+    model->updateGeometryByModelMatrix();
     model->setColourRGB(234, 197, 138);
+    model->setMaterial(new Material(0.18f, 8));
 
     return model;
 }
@@ -128,7 +128,7 @@ Model *createFloor()
 {
     static const char *vertexShader = "shaders/textured/shader.vert";
     static const char *fragmentShader = "shaders/textured/shader.frag";
-    static const char *texturePath = "textures/dirt.png";
+    static const char *texturePath = "textures/plain.png";
 
     unsigned int indices[] = {
         0, 2, 1,
@@ -151,9 +151,7 @@ Model *createFloor()
                              32,
                              6);
 
-    Material *material = new Material(10.0f, 128);
-
-    model->setMaterial(material);
+    model->setMaterial(new Material(1.0f, 7));
     model->setModelMatrix(modelMatrix);
 
     return model;
@@ -239,63 +237,95 @@ Model *createPyramid()
 int main()
 {
     GLfloat deltaTime = 0.0f, lastTime = 0.0f;
-    GLint screenWidth = 768;
-    GLint screenHeight = 768;
-    Window mainWindow = Window(screenWidth, screenHeight);
+
+    glm::vec2 SCREEN(1376, 768);
+    Window mainWindow = Window(SCREEN.x, SCREEN.y);
     mainWindow.initialize();
 
-    Camera camera = Camera();
+    Camera camera = Camera(2.0f, 2.0f, 2.0f,
+                           0.0f, 1.0f, 0.0f,
+                           -135.0f, -38.0f,
+                           3.0f,
+                           0.1f);
 
-    DirectionalLight *directionalLight = new DirectionalLight(1.0f, 1.0f, 1.0f,
-                                                              0.2f, 0.7f,
-                                                              -3.0f, -3.0f, -3.0f);
+    PointLight *p1 = new PointLight(1.0f, 1.0f, 1.0f,
+                                    0.01f, 0.5f,
+                                    3.0f, 3.0f, 3.0f,
+                                    0.8f, 0.2f, 0.1f);
 
-    PointLight *pointLight1 = new PointLight(1.0f, 1.0f, 1.0f,
-                                             0.1f, 0.7f,
-                                             -4.0f, 2.0f, 0.0f,
-                                             0.8f, 0.2f, 0.1f);
+    PointLight *p2 = new PointLight(1.0f, 1.0f, 1.0f,
+                                    0.01f, 0.5f,
+                                    -3.0f, 3.0f, 3.0f,
+                                    0.8f, 0.2f, 0.1f);
 
-    PointLight *pointLight2 = new PointLight(0.5f, 0.0f, 1.0f,
-                                             0.01f, 1.0f,
-                                             4.0f, 2.0f, 0.0f,
-                                             0.3f, 0.2f, 0.1f);
+    PointLight *p3 = new PointLight(1.0f, 1.0f, 1.0f,
+                                    0.01f, 0.5f,
+                                    3.0f, 3.0f, -3.0f,
+                                    0.8f, 0.2f, 0.1f);
 
-    PointLight *pointLight3 = new PointLight(0.0f, 0.0f, 1.0f,
-                                             0.01f, 1.0f,
-                                             0.0f, 2.0f, -10.0f,
-                                             0.3f, 0.2f, 0.1f);
+    PointLight *p4 = new PointLight(1.0f, 1.0f, 1.0f,
+                                    0.01f, 0.5f,
+                                    -3.0f, 3.0f, -3.0f,
+                                    0.8f, 0.2f, 0.1f);
+
+    PointLight *p5 = new PointLight(1.0f, 1.0f, 1.0f,
+                                    0.01f, 0.5f,
+                                    3.0f, -3.0f, 3.0f,
+                                    0.8f, 0.2f, 0.1f);
+
+    PointLight *p6 = new PointLight(1.0f, 1.0f, 1.0f,
+                                    0.01f, 0.5f,
+                                    -3.0f, -3.0f, 3.0f,
+                                    0.8f, 0.2f, 0.1f);
+
+    PointLight *p7 = new PointLight(1.0f, 1.0f, 1.0f,
+                                    0.01f, 0.5f,
+                                    3.0f, -3.0f, -3.0f,
+                                    0.8f, 0.2f, 0.1f);
+
+    PointLight *p8 = new PointLight(1.0f, 1.0f, 1.0f,
+                                    0.01f, 0.5f,
+                                    -3.0f, -3.0f, -3.0f,
+                                    0.8f, 0.2f, 0.1f);
 
     FlashLight *flashLight = new FlashLight(0.8f, 0.8f, 0.8f,
-                                            0.0f, 2.0f,
+                                            0.2f, 0.3f,
                                             0.0f, 0.0f, 0.0f,
                                             0.0f, -1.0f, 0.0f,
-                                            1.0f, 0.0f, 0.0f,
+                                            0.7f, 0.001f, 0.001f,
                                             200.0f);
-
-    SpotLight *spotLight2 = new SpotLight(1.0f, 1.0f, 1.0f,
-                                          0.0f, 0.5f,
-                                          0.0f, 10.0f, 0.0f,
-                                          0.0f, -1.0f, 0.0f,
-                                          1.0f, 0.0f, 0.0f,
-                                          10.0f);
 
     glm::mat4 projection = glm::perspective(glm::radians(45.0f),
                                             (GLfloat)mainWindow.getBufferWidth() / mainWindow.getBufferHeight(),
-                                            0.1f,
+                                            0.01f,
                                             100.0f);
     Model *block = createBlock();
+    Model *floor = createFloor();
 
     Scene scene = Scene();
-    scene.addModel(createFloor());
+
+    scene.addModel(floor);
     scene.addModel(block);
+
     scene.setProjectionMatrix(projection);
-    scene.setDirectionalLight(directionalLight);
+
+    scene.addPointLight(p1);
+    scene.addPointLight(p2);
+    scene.addPointLight(p3);
+    scene.addPointLight(p4);
+    scene.addPointLight(p5);
+    scene.addPointLight(p6);
+    scene.addPointLight(p7);
+    scene.addPointLight(p8);
+
+    scene.setFlashLight(flashLight);
+
     scene.setCameraPointer(&camera);
 
-    MousePicker mousePicker = MousePicker(screenWidth,
-                                          screenHeight,
-                                          projection,
-                                          block->getGeometry());
+    MousePicker mousePicker = MousePicker(SCREEN.x, SCREEN.y, projection, block);
+
+    Gui interface = Gui(mainWindow.getWindowPointer());
+    interface.setModel(block);
 
     while (!mainWindow.getShouldClose())
     {
@@ -310,13 +340,12 @@ int main()
         glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-        camera.listenKeys(&mainWindow, mainWindow.getKeys(), deltaTime);
-        camera.listenMouseMovement(&mainWindow, mainWindow.getXDelta(), mainWindow.getYDelta());
-        camera.listenMousePicker(&mainWindow, mousePicker);
-
-        directionalLight->setDirection(camera.getDirection());
+        camera.listenKeys(&mainWindow, deltaTime);
+        camera.listenMousePicker(&mainWindow, &mousePicker);
+        camera.listenMouseMovement(mainWindow.getXDelta(), mainWindow.getYDelta());
 
         scene.render();
+        interface.render();
 
         mainWindow.swapBuffers();
     }
