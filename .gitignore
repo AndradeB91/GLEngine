@@ -1,3 +1,5 @@
 .DS_Store
 GLEngine
 settings.json
+vendor
+imgui*
