@@ -15,24 +15,25 @@ class Camera
 {
 public:
     Camera(
-        glm::vec3 position = glm::vec3(0.0f, 0.0f, 0.0f),
-        glm::vec3 up = glm::vec3(0.0f, 1.0f, 0.0f),
-        GLfloat yaw = -90.0f,
-        GLfloat pitch = 1.0f,
-        GLfloat movementSpeed = 3.0f,
-        GLfloat turnSpeed = 0.1f);
+        GLfloat xPos = 0.0f,
+        GLfloat yPos = 0.0f,
+        GLfloat zPos = 0.0f,
+        GLfloat xUp = 0.0f,
+        GLfloat yUp = 1.0f,
+        GLfloat zUp = 0.0f,
+        GLfloat yaw = 0.0f,
+        GLfloat pitch = 0.0f,
+        GLfloat movementSpeed = 0.0f,
+        GLfloat turnSpeed = 0.0f);
 
     void listenKeys(Window *window, bool *keys, GLfloat deltaTime);
-    void listenMouseMovement(Window *window, GLfloat xDelta, GLfloat yDelta);
-    void listenMousePicker(Window *window, MousePicker mousePicker);
+    void listenMousePicker(Window *window, MousePicker *mousePicker);
+    void listenMouseMovement(GLfloat xDelta, GLfloat yDelta);
 
     glm::vec3 getPosition();
     glm::vec3 getDirection();
 
     glm::mat4 calculateViewMatrix();
-
-    glm::mat4 getOrientation();
-    glm::mat4 getView();
 
     ~Camera();
 

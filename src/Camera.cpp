@@ -4,17 +4,21 @@ const float RESET_TIME_MAX = 1.0f;
 const float RESET_TIME_STEP = 0.05f;
 const float MAX_ANGLE = 89.0f;
 
-Camera::Camera(glm::vec3 position,
-               glm::vec3 up,
+Camera::Camera(GLfloat xPos,
+               GLfloat yPos,
+               GLfloat zPos,
+               GLfloat xUp,
+               GLfloat yUp,
+               GLfloat zUp,
                GLfloat yaw,
                GLfloat pitch,
                GLfloat movementSpeed,
                GLfloat turnSpeed)
 {
-    this->_cursorEnabled = false;
+    this->_cursorEnabled = true;
     this->_resetTime = 0.0f;
-    this->_position = position;
-    this->_worldUp = up;
+    this->_position = glm::vec3(xPos, yPos, zPos);
+    this->_worldUp = glm::vec3(xUp, yUp, zUp);
     this->_yaw = yaw;
     this->_pitch = pitch;
     this->_front = glm::vec3(0.0f, 0.0f, -1.0f);
@@ -38,19 +42,6 @@ glm::vec3 Camera::getPosition()
 glm::vec3 Camera::getDirection()
 {
     return glm::normalize(this->_front);
-}
-
-glm::mat4 Camera::getOrientation()
-{
-    glm::mat4 orientation = glm::mat4(1.0f);
-    orientation = glm::rotate(orientation, glm::radians(this->_pitch), glm::vec3(1, 0, 0));
-    orientation = glm::rotate(orientation, glm::radians(this->_yaw), glm::vec3(0, 1, 0));
-    return orientation;
-}
-
-glm::mat4 Camera::getView()
-{
-    return this->getOrientation() * glm::translate(glm::mat4(1.0f), -this->_position);
 }
 
 void Camera::update()
@@ -121,6 +112,7 @@ void Camera::listenKeys(Window *window, bool *keys, GLfloat deltaTime)
         else
         {
             glfwSetInputMode(window->getWindowPointer(), GLFW_CURSOR, GLFW_CURSOR_NORMAL);
+
             glfwSetCursorPos(window->getWindowPointer(),
                              window->getWidth() / 2.0f,
                              window->getHeight() / 2.0f);
@@ -133,7 +125,7 @@ void Camera::listenKeys(Window *window, bool *keys, GLfloat deltaTime)
     }
 }
 
-void Camera::listenMouseMovement(Window *window, GLfloat xDelta, GLfloat yDelta)
+void Camera::listenMouseMovement(GLfloat xDelta, GLfloat yDelta)
 {
     xDelta *= this->_turnSpeed;
     yDelta *= this->_turnSpeed;
@@ -155,7 +147,7 @@ void Camera::listenMouseMovement(Window *window, GLfloat xDelta, GLfloat yDelta)
     this->update();
 }
 
-void Camera::listenMousePicker(Window *window, MousePicker mousePicker)
+void Camera::listenMousePicker(Window *window, MousePicker *mousePicker)
 {
     if (this->_cursorEnabled &&
         this->_resetTime == 0.0f &&
@@ -164,10 +156,12 @@ void Camera::listenMousePicker(Window *window, MousePicker mousePicker)
         double mouseX, mouseY;
         glfwGetCursorPos(window->getWindowPointer(), &mouseX, &mouseY);
 
-        GLint index = mousePicker.intersects(this->_position,
-                                             this->calculateViewMatrix(),
-                                             (GLfloat)mouseX, (GLfloat)mouseY);
-        printf("chosen index: %d\n", index);
+        mousePicker->intersects(this->_position,
+                                this->calculateViewMatrix(),
+                                (GLfloat)mouseX, (GLfloat)mouseY);
+
+        printf("%lu\n", mousePicker->getSelectedFacesIndexList().size());
+
         this->_resetTime = RESET_TIME_MAX;
     }
 }
