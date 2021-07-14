@@ -11,6 +11,8 @@
 class Model
 {
 public:
+      Model();
+
       Model(const char *vertexShader,
             const char *fragmentShader);
 
@@ -34,6 +36,9 @@ public:
       void setModelMatrix(glm::mat4 modelMatrix);
       glm::mat4 getModelMatrix();
 
+      void setScaleFactor(GLfloat scaleFactor);
+      GLfloat getScaleFactor();
+
       void setMaterial(Material *material);
       Material *getMaterial();
 
@@ -54,6 +59,11 @@ public:
       void setGeometry(Geometry geometry);
       Geometry getGeometry();
 
+      void updateGeometryByModelMatrix();
+
+      void setName(const char *name);
+      const char *getName();
+
       void prepareToRender();
       void render();
 
@@ -64,5 +74,7 @@ private:
       Texture *_texture;
       Material *_material;
       glm::mat4 _modelMatrix;
+      GLfloat _scaleFactor;
       glm::vec3 _colour;
+      const char *_name;
 };

@@ -1,5 +1,9 @@
 #include "Model.h"
 
+Model::Model()
+{
+}
+
 Model::Model(const char *vertexShader,
              const char *fragmentShader,
              const char *texturePath,
@@ -81,6 +85,16 @@ glm::mat4 Model::getModelMatrix()
     return this->_modelMatrix;
 }
 
+void Model::setScaleFactor(GLfloat scaleFactor)
+{
+    this->_scaleFactor = scaleFactor;
+}
+
+GLfloat Model::getScaleFactor()
+{
+    return this->_scaleFactor;
+}
+
 void Model::setMaterial(Material *material)
 {
     this->_material = material;
@@ -141,7 +155,15 @@ Mesh *Model::getMesh()
 void Model::setGeometry(Geometry geometry)
 {
     this->_geometry = geometry;
+}
 
+Geometry Model::getGeometry()
+{
+    return this->_geometry;
+}
+
+void Model::updateGeometryByModelMatrix()
+{
     for (size_t i = 0; i < this->_geometry.vertices.size(); i++)
     {
         Vertice vertice = this->_geometry.vertices[i];
@@ -154,9 +176,14 @@ void Model::setGeometry(Geometry geometry)
     }
 }
 
-Geometry Model::getGeometry()
+void Model::setName(const char *name)
 {
-    return this->_geometry;
+    this->_name = name;
+}
+
+const char *Model::getName()
+{
+    return this->_name;
 }
 
 void Model::prepareToRender()
