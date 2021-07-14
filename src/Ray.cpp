@@ -34,8 +34,8 @@ glm::vec3 Ray::getDirection()
  * Moller-Trumbore intersection.
  * https://en.wikipedia.org/wiki/M%C3%B6ller%E2%80%93Trumbore_intersection_algorithm
  */
-int Ray::faceIntersection(glm::vec3 va, glm::vec3 vb, glm::vec3 vc,
-                          float *t)
+int Ray::intersectsFace(glm::vec3 va, glm::vec3 vb, glm::vec3 vc,
+                        float *t)
 {
     const float EPSILON = 0.000001;
 
@@ -67,6 +67,33 @@ int Ray::faceIntersection(glm::vec3 va, glm::vec3 vb, glm::vec3 vc,
         return 0;
 
     return 1;
+}
+
+int Ray::intersectsGeometry(Geometry geometry, int *indice)
+{
+    GLboolean intersect = false;
+    GLfloat minT = FLT_MAX;
+
+    for (int i = 0; i < geometry.faces.size(); i++)
+    {
+        Face face = geometry.faces[i];
+        Vertice v0 = geometry.vertices[face.ind0];
+        Vertice v1 = geometry.vertices[face.ind1];
+        Vertice v2 = geometry.vertices[face.ind2];
+
+        GLfloat newt;
+        if (this->intersectsFace(v0.coords, v1.coords, v2.coords, &newt))
+        {
+            if (newt < minT)
+            {
+                minT = newt;
+                intersect = true;
+                *indice = i;
+            }
+        }
+    }
+
+    return intersect;
 }
 
 Ray::~Ray()

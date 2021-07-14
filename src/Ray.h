@@ -2,6 +2,8 @@
 
 #include <glm/glm.hpp>
 
+#include "Geometry.h"
+
 class Ray
 {
 public:
@@ -15,8 +17,10 @@ public:
     glm::vec3 getOrigin();
     glm::vec3 getDirection();
 
-    int faceIntersection(glm::vec3 va, glm::vec3 vb, glm::vec3 vc,
-                         float *t);
+    int intersectsFace(glm::vec3 va, glm::vec3 vb, glm::vec3 vc,
+                       float *t);
+
+    int intersectsGeometry(Geometry geometry, int *indice);
 
     ~Ray();
 

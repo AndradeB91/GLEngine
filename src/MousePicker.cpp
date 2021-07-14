@@ -1,4 +1,5 @@
 #include "MousePicker.h"
+#include <iostream>
 
 MousePicker::MousePicker()
 {
@@ -14,52 +15,55 @@ MousePicker::MousePicker(GLint screenWidth,
     this->_projectionMatrix = projectionMatrix;
     this->_geometry = geometry;
     this->_viewMatrix = glm::mat4(1.0f);
+    this->_selectedFacesIndex = std::list<GLint>();
 }
 
-GLint MousePicker::intersects(glm::vec3 camPos,
-                              glm::mat4 camViewMatrix,
-                              GLfloat mouseXPos,
-                              GLfloat mouseYPos)
+std::list<GLint> MousePicker::getSelectedFacesIndexList()
+{
+    return this->_selectedFacesIndex;
+}
+
+void MousePicker::clearSelectedFacesIndexList()
+{
+    this->_selectedFacesIndex.clear();
+}
+
+void MousePicker::intersects(glm::vec3 camPos,
+                             glm::mat4 camViewMatrix,
+                             GLfloat mouseXPos,
+                             GLfloat mouseYPos)
 {
     this->_viewMatrix = camViewMatrix;
 
     glm::vec3 rayDirection = this->getMouseToScreenRay(mouseXPos, mouseYPos);
     Ray ray = Ray(camPos, rayDirection);
 
-    GLint indice = -1;
-    this->geometryRayIntersection(ray, &indice);
+    GLint index = -1;
 
-    return indice;
+    if (ray.intersectsGeometry(this->_geometry, &index))
+    {
+        this->addUniqueIndexToList(index);
+    }
 }
 
-GLboolean MousePicker::geometryRayIntersection(Ray ray, int *indice)
+void MousePicker::addUniqueIndexToList(GLint index)
 {
-    GLboolean intersect = false;
-    GLfloat minT = FLT_MAX;
+    bool isAlreadyIncluded = false;
 
-    glm::vec3 origin = ray.getOrigin();
-    glm::vec3 direction = ray.getDirection();
-
-    for (int i = 0; i < this->_geometry.faces.size(); i++)
+    for (std::list<int>::iterator it = this->_selectedFacesIndex.begin();
+         it != this->_selectedFacesIndex.end(); ++it)
     {
-        Face face = this->_geometry.faces[i];
-        Vertice v0 = this->_geometry.vertices[face.ind0];
-        Vertice v1 = this->_geometry.vertices[face.ind1];
-        Vertice v2 = this->_geometry.vertices[face.ind2];
-
-        GLfloat newt;
-        if (ray.faceIntersection(v0.coords, v1.coords, v2.coords, &newt))
+        if (*it == index)
         {
-            if (newt < minT)
-            {
-                minT = newt;
-                intersect = true;
-                *indice = i;
-            }
+            isAlreadyIncluded = true;
+            break;
         }
     }
 
-    return intersect;
+    if (isAlreadyIncluded == false)
+    {
+        this->_selectedFacesIndex.push_back(index);
+    }
 }
 
 glm::vec3 MousePicker::getMouseToScreenRay(GLfloat mouseXPos, GLfloat mouseYPos)
