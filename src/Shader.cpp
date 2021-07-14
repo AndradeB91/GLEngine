@@ -68,16 +68,6 @@ void Shader::compileShader(const char *vertexCode, const char *fragmentCode)
         printf("Error linking program: '%s'\n", eLog);
         return;
     }
-
-    // Skip validation temporarily because of a bug
-    // glValidateProgram(this->_shaderID);
-    // glGetProgramiv(this->_shaderID, GL_VALIDATE_STATUS, &result);
-    //
-    // if(!result) {
-    //   glGetProgramInfoLog(this->_shaderID, sizeof(eLog), NULL, eLog);
-    //   printf("Error validating program: '%s'\n", eLog);
-    //   return;
-    // }
 }
 
 GLuint Shader::getUniformLocation(const char *uniform)
