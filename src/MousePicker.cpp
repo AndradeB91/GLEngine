@@ -3,17 +3,23 @@
 
 MousePicker::MousePicker()
 {
+    this->_screenWidth = 800;
+    this->_screenHeight = 600;
+    this->_projectionMatrix = glm::mat4(1.0f);
+    this->_model = Model();
+    this->_viewMatrix = glm::mat4(1.0f);
+    this->_selectedFacesIndex = std::list<GLint>();
 }
 
 MousePicker::MousePicker(GLint screenWidth,
                          GLint screenHeight,
                          glm::mat4 projectionMatrix,
-                         Geometry geometry)
+                         Model *model)
 {
     this->_screenWidth = screenWidth;
     this->_screenHeight = screenHeight;
     this->_projectionMatrix = projectionMatrix;
-    this->_geometry = geometry;
+    this->_model = *model;
     this->_viewMatrix = glm::mat4(1.0f);
     this->_selectedFacesIndex = std::list<GLint>();
 }
@@ -40,7 +46,7 @@ void MousePicker::intersects(glm::vec3 camPos,
 
     GLint index = -1;
 
-    if (ray.intersectsGeometry(this->_geometry, &index))
+    if (ray.intersectsGeometry(this->_model.getGeometry(), &index))
     {
         this->addUniqueIndexToList(index);
     }

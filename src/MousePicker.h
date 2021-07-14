@@ -4,7 +4,7 @@
 #include <glm/glm.hpp>
 #include <list>
 
-#include "Geometry.h"
+#include "Model.h"
 #include "Ray.h"
 
 class MousePicker
@@ -16,7 +16,7 @@ public:
     MousePicker(GLint screenWidth,
                 GLint screenHeight,
                 glm::mat4 projectionMatrix,
-                Geometry geometry);
+                Model *model);
 
     void intersects(glm::vec3 camPos,
                     glm::mat4 camViewMatrix,
@@ -40,7 +40,7 @@ private:
 
     glm::mat4 _projectionMatrix, _viewMatrix;
 
-    Geometry _geometry;
+    Model _model;
 
     std::list<GLint> _selectedFacesIndex;
 };
