@@ -14,8 +14,8 @@
 #include "SpotLight.h"
 #include "FlashLight.h"
 
-const unsigned int MAX_POINT_LIGHTS = 10;
-const unsigned int MAX_SPOT_LIGHTS = 10;
+const unsigned int MAX_POINT_LIGHTS = 8;
+const unsigned int MAX_SPOT_LIGHTS = 8;
 
 class Scene
 {
