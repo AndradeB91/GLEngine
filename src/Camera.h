@@ -26,7 +26,7 @@ public:
         GLfloat movementSpeed = 0.0f,
         GLfloat turnSpeed = 0.0f);
 
-    void listenKeys(Window *window, bool *keys, GLfloat deltaTime);
+    void listenKeys(Window *window, GLfloat deltaTime);
     void listenMousePicker(Window *window, MousePicker *mousePicker);
     void listenMouseMovement(GLfloat xDelta, GLfloat yDelta);
 
@@ -41,7 +41,7 @@ private:
     glm::vec3 _position, _front, _up, _right, _worldUp;
 
     GLfloat _yaw, _pitch;
-    GLfloat _movementSpeed, _turnSpeed;
+    GLfloat _movementSpeed, _turnSpeed, _actualTurnSpeed;
 
     GLboolean _cursorEnabled;
     GLfloat _resetTime;

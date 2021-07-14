@@ -25,6 +25,7 @@ Camera::Camera(GLfloat xPos,
 
     this->_movementSpeed = movementSpeed;
     this->_turnSpeed = turnSpeed;
+    this->_actualTurnSpeed = 0.0f;
 
     this->update();
 }
@@ -58,56 +59,56 @@ void Camera::update()
     this->_resetTime = std::max(0.0f, this->_resetTime - RESET_TIME_STEP);
 }
 
-void Camera::listenKeys(Window *window, bool *keys, GLfloat deltaTime)
+void Camera::listenKeys(Window *window, GLfloat deltaTime)
 {
     GLfloat velocity = this->_movementSpeed * deltaTime;
 
-    if (keys[GLFW_KEY_W])
+    if (glfwGetKey(window->getWindowPointer(), GLFW_KEY_W))
     {
         this->_position += this->_front * velocity;
     }
 
-    if (keys[GLFW_KEY_S])
+    if (glfwGetKey(window->getWindowPointer(), GLFW_KEY_S))
     {
         this->_position -= this->_front * velocity;
     }
 
-    if (keys[GLFW_KEY_D])
+    if (glfwGetKey(window->getWindowPointer(), GLFW_KEY_D))
     {
         this->_position += this->_right * velocity;
     }
 
-    if (keys[GLFW_KEY_A])
+    if (glfwGetKey(window->getWindowPointer(), GLFW_KEY_A))
     {
         this->_position -= this->_right * velocity;
     }
 
-    if (keys[GLFW_KEY_LEFT_SHIFT])
+    if (glfwGetKey(window->getWindowPointer(), GLFW_KEY_LEFT_SHIFT))
     {
         this->_position -= this->_up * velocity;
     }
 
-    if (keys[GLFW_KEY_SPACE])
+    if (glfwGetKey(window->getWindowPointer(), GLFW_KEY_SPACE))
     {
         this->_position += this->_up * velocity;
     }
 
-    if (keys[GLFW_KEY_EQUAL])
+    if (glfwGetKey(window->getWindowPointer(), GLFW_KEY_EQUAL))
     {
         this->_movementSpeed += 0.2f;
     }
 
-    if (keys[GLFW_KEY_MINUS])
+    if (glfwGetKey(window->getWindowPointer(), GLFW_KEY_MINUS))
     {
         this->_movementSpeed = std::max(0.1f, this->_movementSpeed - 0.2f);
     }
 
-    if (keys[GLFW_KEY_TAB] && this->_resetTime == 0.0f)
+    if (glfwGetKey(window->getWindowPointer(), GLFW_KEY_TAB) && this->_resetTime == 0.0f)
     {
         if (this->_cursorEnabled)
         {
             glfwSetInputMode(window->getWindowPointer(), GLFW_CURSOR, GLFW_CURSOR_DISABLED);
-            this->_turnSpeed = 0.1f;
+            this->_actualTurnSpeed = this->_turnSpeed;
         }
         else
         {
@@ -117,7 +118,7 @@ void Camera::listenKeys(Window *window, bool *keys, GLfloat deltaTime)
                              window->getWidth() / 2.0f,
                              window->getHeight() / 2.0f);
 
-            this->_turnSpeed = 0;
+            this->_actualTurnSpeed = 0;
         }
 
         this->_resetTime = RESET_TIME_MAX;
@@ -127,8 +128,8 @@ void Camera::listenKeys(Window *window, bool *keys, GLfloat deltaTime)
 
 void Camera::listenMouseMovement(GLfloat xDelta, GLfloat yDelta)
 {
-    xDelta *= this->_turnSpeed;
-    yDelta *= this->_turnSpeed;
+    xDelta *= this->_actualTurnSpeed;
+    yDelta *= this->_actualTurnSpeed;
 
     this->_yaw += xDelta;
 
