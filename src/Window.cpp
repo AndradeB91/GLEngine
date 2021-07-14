@@ -44,7 +44,7 @@ int Window::initialize()
     // Allow forward compatibility
     glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
 
-    this->_mainWindow = glfwCreateWindow(this->_width, this->_height, "Main window", NULL, NULL);
+    this->_mainWindow = glfwCreateWindow(this->_width, this->_height, "GLEngine", NULL, NULL);
 
     if (!this->_mainWindow)
     {
