@@ -19,8 +19,8 @@ public:
 
     void loadObj(const std::string &fileName);
 
-    Geometry loadObjGeometry(const std::string &fileName);
-    Mesh *geometryToMesh(Geometry geometry);
+    Geometry *loadObjGeometry(const std::string &fileName);
+    Mesh *geometryToMesh(Geometry *geometry);
 
     void clear();
 
@@ -35,7 +35,7 @@ private:
     void loadMesh(aiMesh *mesh, const aiScene *scene);
     void loadMaterials(const aiScene *scene);
 
-    Geometry loadGeometry(aiMesh *mesh);
+    Geometry *loadGeometry(aiMesh *mesh);
 
     std::vector<Mesh *> _meshList;
     std::vector<Texture *> _textureList;

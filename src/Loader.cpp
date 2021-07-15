@@ -39,7 +39,7 @@ void Loader::loadObj(const std::string &fileName)
     loadMaterials(scene);
 }
 
-Geometry Loader::loadObjGeometry(const std::string &fileName)
+Geometry *Loader::loadObjGeometry(const std::string &fileName)
 {
     Assimp::Importer importer;
     const aiScene *scene = importer.ReadFile(fileName,
@@ -51,7 +51,7 @@ Geometry Loader::loadObjGeometry(const std::string &fileName)
     if (!scene)
     {
         printf("Model (%s) failed to load: %s", fileName.c_str(), importer.GetErrorString());
-        return Geometry();
+        return new Geometry();
     }
 
     return this->loadGeometry(scene->mMeshes[0]);
@@ -70,59 +70,55 @@ void Loader::loadNode(aiNode *node, const aiScene *scene)
     }
 }
 
-Geometry Loader::loadGeometry(aiMesh *mesh)
+Geometry *Loader::loadGeometry(aiMesh *mesh)
 {
-    Geometry meshGeometry;
-
-    meshGeometry.setNumVertices(mesh->mNumVertices);
+    Geometry *geometry = new Geometry();
 
     for (size_t i = 0; i < mesh->mNumVertices; i++)
     {
-        meshGeometry.addVertice(mesh->mVertices[i].x,
-                                mesh->mVertices[i].y,
-                                mesh->mVertices[i].z);
+        geometry->addVertice(mesh->mVertices[i].x,
+                             mesh->mVertices[i].y,
+                             mesh->mVertices[i].z);
 
-        meshGeometry.addNormal(-mesh->mNormals[i].x,
-                               -mesh->mNormals[i].y,
-                               -mesh->mNormals[i].z);
+        geometry->addNormal(-mesh->mNormals[i].x,
+                            -mesh->mNormals[i].y,
+                            -mesh->mNormals[i].z);
     }
-
-    meshGeometry.setNumFaces(mesh->mNumFaces);
 
     for (size_t i = 0; i < mesh->mNumFaces; i++)
     {
         aiFace face = mesh->mFaces[i];
-        meshGeometry.addFace(face.mIndices[0],
-                             face.mIndices[1],
-                             face.mIndices[2]);
+        geometry->addFace(face.mIndices[0],
+                          face.mIndices[1],
+                          face.mIndices[2]);
     }
 
-    return meshGeometry;
+    return geometry;
 }
 
-Mesh *Loader::geometryToMesh(Geometry geometry)
+Mesh *Loader::geometryToMesh(Geometry *geometry)
 {
     std::vector<GLfloat> vertices;
     std::vector<unsigned int> indices;
 
-    for (size_t i = 0; i < geometry.getNumVertices(); i++)
+    for (size_t i = 0; i < geometry->getNumVertices(); i++)
     {
-        glm::vec3 verticeCoords = geometry.vertices[i].coords;
+        glm::vec3 verticeCoords = geometry->vertices[i].coords;
 
         vertices.push_back(verticeCoords.x);
         vertices.push_back(verticeCoords.y);
         vertices.push_back(verticeCoords.z);
 
-        glm::vec3 normalCoords = geometry.normals[i].coords;
+        glm::vec3 normalCoords = geometry->normals[i].coords;
 
         vertices.push_back(normalCoords.x);
         vertices.push_back(normalCoords.y);
         vertices.push_back(normalCoords.z);
     }
 
-    for (size_t i = 0; i < geometry.getNumFaces(); i++)
+    for (size_t i = 0; i < geometry->getNumFaces(); i++)
     {
-        Face face = geometry.faces[i];
+        Face face = geometry->faces[i];
 
         indices.push_back(face.ind0);
         indices.push_back(face.ind1);
