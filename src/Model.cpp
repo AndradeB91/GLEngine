@@ -85,16 +85,6 @@ glm::mat4 Model::getModelMatrix()
     return this->_modelMatrix;
 }
 
-void Model::setScaleFactor(GLfloat scaleFactor)
-{
-    this->_scaleFactor = scaleFactor;
-}
-
-GLfloat Model::getScaleFactor()
-{
-    return this->_scaleFactor;
-}
-
 void Model::setMaterial(Material *material)
 {
     this->_material = material;
@@ -152,27 +142,27 @@ Mesh *Model::getMesh()
     return this->_mesh;
 }
 
-void Model::setGeometry(Geometry geometry)
+void Model::setGeometry(Geometry *geometry)
 {
     this->_geometry = geometry;
 }
 
-Geometry Model::getGeometry()
+Geometry *Model::getGeometry()
 {
     return this->_geometry;
 }
 
 void Model::updateGeometryByModelMatrix()
 {
-    for (size_t i = 0; i < this->_geometry.vertices.size(); i++)
+    for (size_t i = 0; i < this->_geometry->vertices.size(); i++)
     {
-        Vertice vertice = this->_geometry.vertices[i];
+        Vertice vertice = this->_geometry->vertices[i];
         glm::vec4 modifiedVertice = this->_modelMatrix * glm::vec4(vertice.coords.x,
                                                                    vertice.coords.y,
                                                                    vertice.coords.z,
                                                                    1.0f);
 
-        this->_geometry.vertices[i] = Vertice(modifiedVertice.x, modifiedVertice.y, modifiedVertice.z);
+        this->_geometry->vertices[i] = Vertice(modifiedVertice.x, modifiedVertice.y, modifiedVertice.z);
     }
 }
 
@@ -208,6 +198,7 @@ Model::~Model()
 {
     free(this->_shader);
     free(this->_mesh);
+    free(this->_geometry);
     free(this->_texture);
     free(this->_material);
 }

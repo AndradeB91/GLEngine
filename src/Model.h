@@ -36,9 +36,6 @@ public:
       void setModelMatrix(glm::mat4 modelMatrix);
       glm::mat4 getModelMatrix();
 
-      void setScaleFactor(GLfloat scaleFactor);
-      GLfloat getScaleFactor();
-
       void setMaterial(Material *material);
       Material *getMaterial();
 
@@ -56,8 +53,8 @@ public:
       void setMesh(Mesh *mesh);
       Mesh *getMesh();
 
-      void setGeometry(Geometry geometry);
-      Geometry getGeometry();
+      void setGeometry(Geometry *geometry);
+      Geometry *getGeometry();
 
       void updateGeometryByModelMatrix();
 
@@ -69,12 +66,17 @@ public:
 
 private:
       Shader *_shader;
+
       Mesh *_mesh;
-      Geometry _geometry;
+
+      Geometry *_geometry;
+
       Texture *_texture;
       Material *_material;
+
       glm::mat4 _modelMatrix;
-      GLfloat _scaleFactor;
+
       glm::vec3 _colour;
+
       const char *_name;
 };
