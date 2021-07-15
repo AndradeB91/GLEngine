@@ -161,8 +161,6 @@ void Camera::listenMousePicker(Window *window, MousePicker *mousePicker)
                                 this->calculateViewMatrix(),
                                 (GLfloat)mouseX, (GLfloat)mouseY);
 
-        printf("%lu\n", mousePicker->getSelectedFacesIndexList().size());
-
         this->_resetTime = RESET_TIME_MAX;
     }
 }
