@@ -14,9 +14,6 @@ public:
 
     ~Geometry();
 
-    void setNumVertices(GLint numVertices);
-    void setNumFaces(GLint numFaces);
-
     GLint getNumVertices();
     GLint getNumFaces();
 
@@ -25,6 +22,8 @@ public:
     void addVertice(GLfloat x, GLfloat y, GLfloat z);
     void addNormal(GLfloat x, GLfloat y, GLfloat z);
     void addFace(GLint ind0, GLint ind1, GLint ind2);
+
+    void removeFace(GLint index);
 
     std::vector<Vertice> vertices;
     std::vector<Vertice> normals;

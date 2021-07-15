@@ -4,24 +4,14 @@ Geometry::Geometry()
 {
 }
 
-void Geometry::setNumVertices(int numVertices)
-{
-    this->_numVertices = numVertices;
-}
-
-void Geometry::setNumFaces(GLint numFaces)
-{
-    this->_numFaces = numFaces;
-}
-
 GLint Geometry::getNumVertices()
 {
-    return this->_numVertices;
+    return this->vertices.size();
 }
 
 GLint Geometry::getNumFaces()
 {
-    return this->_numFaces;
+    return this->faces.size();
 }
 
 void Geometry::addVertice(GLfloat x, GLfloat y, GLfloat z)
@@ -37,6 +27,11 @@ void Geometry::addNormal(GLfloat x, GLfloat y, GLfloat z)
 void Geometry::addFace(GLint ind0, GLint ind1, GLint ind2)
 {
     this->faces.push_back(Face(ind0, ind1, ind2));
+}
+
+void Geometry::removeFace(GLint index)
+{
+    this->faces.erase(this->faces.begin() + index);
 }
 
 Geometry::~Geometry()
