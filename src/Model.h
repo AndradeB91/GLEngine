@@ -5,6 +5,7 @@
 #include "Geometry.h"
 #include "Texture.h"
 #include "Material.h"
+#include "Loader.h"
 
 #include <glm/glm.hpp>
 
@@ -48,35 +49,51 @@ public:
       void setColourPercentage(GLfloat redPercentage, GLfloat greenPercentage, GLfloat bluePercentage);
       void setColourRGB(GLint red, GLint green, GLint blue);
 
+      void setSelectedColourPercentage(GLfloat redPercentage, GLfloat greenPercentage, GLfloat bluePercentage);
+      void setSelectedColourRGB(GLint red, GLint green, GLint blue);
+
       glm::vec3 getColour();
+      glm::vec3 getSelectedColour();
 
       void setMesh(Mesh *mesh);
       Mesh *getMesh();
 
+      void setSelectedMesh(Mesh *mesh);
+      Mesh *getSelectedMesh();
+
       void setGeometry(Geometry *geometry);
       Geometry *getGeometry();
 
-      void updateGeometryByModelMatrix();
+      void buildSelectedMeshGeometry();
+      void setSelectedMeshGeometry(Geometry *geometry);
+      Geometry *getSelectedMeshGeometry();
+
+      void selectFace(GLint index);
+
+      void updateGeometriesByModelMatrix();
 
       void setName(const char *name);
       const char *getName();
 
       void prepareToRender();
       void render();
+      void renderSelectedMesh();
 
 private:
       Shader *_shader;
 
       Mesh *_mesh;
+      Mesh *_selectedMesh;
 
       Geometry *_geometry;
+      Geometry *_selectedMeshGeometry;
 
       Texture *_texture;
       Material *_material;
 
       glm::mat4 _modelMatrix;
 
-      glm::vec3 _colour;
+      glm::vec3 _colour, _selectedColour;
 
       const char *_name;
 };
