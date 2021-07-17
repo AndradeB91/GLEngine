@@ -151,7 +151,6 @@ void Camera::listenMouseMovement(GLfloat xDelta, GLfloat yDelta)
 void Camera::listenMousePicker(Window *window, MousePicker *mousePicker)
 {
     if (this->_cursorEnabled &&
-        this->_resetTime == 0.0f &&
         glfwGetMouseButton(window->getWindowPointer(), GLFW_MOUSE_BUTTON_1))
     {
         double mouseX, mouseY;
@@ -160,8 +159,6 @@ void Camera::listenMousePicker(Window *window, MousePicker *mousePicker)
         mousePicker->intersects(this->_position,
                                 this->calculateViewMatrix(),
                                 (GLfloat)mouseX, (GLfloat)mouseY);
-
-        this->_resetTime = RESET_TIME_MAX;
     }
 }
 
