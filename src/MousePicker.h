@@ -6,6 +6,7 @@
 
 #include "Model.h"
 #include "Ray.h"
+#include "Loader.h"
 
 class MousePicker
 {
@@ -40,7 +41,7 @@ private:
 
     glm::mat4 _projectionMatrix, _viewMatrix;
 
-    Model _model;
+    Model *_model;
 
     std::list<GLint> _selectedFacesIndex;
 };

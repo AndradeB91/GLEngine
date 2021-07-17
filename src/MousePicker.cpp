@@ -6,7 +6,7 @@ MousePicker::MousePicker()
     this->_screenWidth = 800;
     this->_screenHeight = 600;
     this->_projectionMatrix = glm::mat4(1.0f);
-    this->_model = Model();
+    this->_model = new Model();
     this->_viewMatrix = glm::mat4(1.0f);
     this->_selectedFacesIndex = std::list<GLint>();
 }
@@ -19,7 +19,7 @@ MousePicker::MousePicker(GLint screenWidth,
     this->_screenWidth = screenWidth;
     this->_screenHeight = screenHeight;
     this->_projectionMatrix = projectionMatrix;
-    this->_model = *model;
+    this->_model = model;
     this->_viewMatrix = glm::mat4(1.0f);
     this->_selectedFacesIndex = std::list<GLint>();
 }
@@ -44,33 +44,40 @@ void MousePicker::intersects(glm::vec3 camPos,
     glm::vec3 rayDirection = this->getMouseToScreenRay(mouseXPos, mouseYPos);
     Ray ray = Ray(camPos, rayDirection);
 
+    Geometry *geometry = this->_model->getGeometry();
+    Geometry *selectedMeshGeometry = this->_model->getSelectedMeshGeometry();
+
+    if (ray.intersectsGeometry(*selectedMeshGeometry))
+    {
+        return;
+    }
+
     GLint index = -1;
-
-    if (ray.intersectsGeometry(this->_model.getGeometry(), &index))
+    if (ray.intersectsGeometry(*geometry, &index))
     {
-        this->addUniqueIndexToList(index);
+        this->_model->selectFace(index);
     }
 }
 
-void MousePicker::addUniqueIndexToList(GLint index)
-{
-    bool isAlreadyIncluded = false;
+// void MousePicker::addUniqueIndexToList(GLint index)
+// {
+//     bool isAlreadyIncluded = false;
 
-    for (std::list<int>::iterator it = this->_selectedFacesIndex.begin();
-         it != this->_selectedFacesIndex.end(); ++it)
-    {
-        if (*it == index)
-        {
-            isAlreadyIncluded = true;
-            break;
-        }
-    }
+//     for (std::list<int>::iterator it = this->_selectedFacesIndex.begin();
+//          it != this->_selectedFacesIndex.end(); ++it)
+//     {
+//         if (*it == index)
+//         {
+//             isAlreadyIncluded = true;
+//             break;
+//         }
+//     }
 
-    if (isAlreadyIncluded == false)
-    {
-        this->_selectedFacesIndex.push_back(index);
-    }
-}
+//     if (isAlreadyIncluded == false)
+//     {
+//         this->_selectedFacesIndex.push_back(index);
+//     }
+// }
 
 glm::vec3 MousePicker::getMouseToScreenRay(GLfloat mouseXPos, GLfloat mouseYPos)
 {
