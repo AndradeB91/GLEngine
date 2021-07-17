@@ -34,6 +34,20 @@ void Geometry::removeFace(GLint index)
     this->faces.erase(this->faces.begin() + index);
 }
 
+void Geometry::updateGeometryByModelMatrix(glm::mat4 modelMatrix)
+{
+    for (size_t i = 0; i < this->getNumVertices(); i++)
+    {
+        Vertice vertice = this->vertices[i];
+        glm::vec4 modVert = modelMatrix * glm::vec4(vertice.coords.x,
+                                                    vertice.coords.y,
+                                                    vertice.coords.z,
+                                                    1.0f);
+
+        this->vertices[i] = Vertice(modVert.x, modVert.y, modVert.z);
+    }
+}
+
 Geometry::~Geometry()
 {
 }

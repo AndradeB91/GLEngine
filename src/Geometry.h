@@ -25,6 +25,8 @@ public:
 
     void removeFace(GLint index);
 
+    void updateGeometryByModelMatrix(glm::mat4 modelMatrix);
+
     std::vector<Vertice> vertices;
     std::vector<Vertice> normals;
     std::vector<Face> faces;
