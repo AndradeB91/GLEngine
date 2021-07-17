@@ -21,6 +21,7 @@ public:
                        float *t);
 
     int intersectsGeometry(Geometry geometry, int *indice);
+    int intersectsGeometry(Geometry geometry);
 
     ~Ray();
 

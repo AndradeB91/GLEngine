@@ -47,6 +47,9 @@ int Ray::intersectsFace(glm::vec3 va, glm::vec3 vb, glm::vec3 vc,
 
     float det = glm::dot(edge1, pvec);
 
+    if (det < EPSILON)
+        return false;
+
     if (det > -EPSILON && det < EPSILON)
         return 0;
     float invdet = 1.0f / det;
@@ -69,12 +72,38 @@ int Ray::intersectsFace(glm::vec3 va, glm::vec3 vb, glm::vec3 vc,
     return 1;
 }
 
+int Ray::intersectsGeometry(Geometry geometry)
+{
+    GLboolean intersect = false;
+    GLfloat minT = FLT_MAX;
+
+    for (int i = 0; i < geometry.getNumFaces(); i++)
+    {
+        Face face = geometry.faces[i];
+        Vertice v0 = geometry.vertices[face.ind0];
+        Vertice v1 = geometry.vertices[face.ind1];
+        Vertice v2 = geometry.vertices[face.ind2];
+
+        GLfloat newt;
+        if (this->intersectsFace(v0.coords, v1.coords, v2.coords, &newt))
+        {
+            if (newt < minT)
+            {
+                minT = newt;
+                intersect = true;
+            }
+        }
+    }
+
+    return intersect;
+}
+
 int Ray::intersectsGeometry(Geometry geometry, int *indice)
 {
     GLboolean intersect = false;
     GLfloat minT = FLT_MAX;
 
-    for (int i = 0; i < geometry.faces.size(); i++)
+    for (int i = 0; i < geometry.getNumFaces(); i++)
     {
         Face face = geometry.faces[i];
         Vertice v0 = geometry.vertices[face.ind0];
