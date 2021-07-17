@@ -22,6 +22,8 @@ void Gui::setModel(Model *model)
 
     glm::vec3 modelColour = this->_model->getColour();
     this->_modelColour = ImVec4(modelColour.x, modelColour.y, modelColour.z, 1.00f);
+    glm::vec3 selectionColour = this->_model->getSelectedColour();
+    this->_selectionColour = ImVec4(selectionColour.x, selectionColour.y, selectionColour.z, 1.00f);
 
     Material *modelMaterial = this->_model->getMaterial();
     this->_materialIntensity = modelMaterial->getSpecularIntensity();
@@ -58,6 +60,9 @@ void Gui::render()
 
         ImGui::ColorEdit3("Model Colour\n", (float *)&this->_modelColour);
         this->_model->setColourPercentage(this->_modelColour.x, this->_modelColour.y, this->_modelColour.z);
+
+        ImGui::ColorEdit3("Selection Colour\n", (float *)&this->_selectionColour);
+        this->_model->setSelectedColourPercentage(this->_selectionColour.x, this->_selectionColour.y, this->_selectionColour.z);
 
         ImGui::SliderFloat("Mat. Intensity", &this->_materialIntensity, 0.0f, 10.0f);
         ImGui::SliderInt("Mat. Shininess", &this->_materialShininessFactor, 0, 20);

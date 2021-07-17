@@ -22,7 +22,7 @@ public:
 private:
     Model *_model;
 
-    ImVec4 _modelColour;
+    ImVec4 _modelColour, _selectionColour;
 
     float _materialIntensity;
     int _materialShininessFactor;
