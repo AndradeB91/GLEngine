@@ -183,6 +183,9 @@ void Scene::render()
         this->updateFlashLight();
 
         (*itModel)->render();
+
+        shader->setUniform3f("modelColour", (*itModel)->getSelectedColour());
+        (*itModel)->renderSelectedMesh();
     }
 }
 
