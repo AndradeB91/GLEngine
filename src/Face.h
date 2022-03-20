@@ -14,5 +14,7 @@ public:
 
     GLint ind0, ind1, ind2;
 
+    GLint getIndex(int i);
+
 private:
 };

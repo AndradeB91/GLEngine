@@ -4,7 +4,7 @@ Gui::Gui()
 {
 }
 
-bool show_demo_window = true;
+bool renderModel = true;
 bool show_another_window = false;
 bool config_window = true;
 ImVec4 clear_color = ImVec4(0.45f, 0.55f, 0.60f, 1.00f);
@@ -14,6 +14,7 @@ Gui::Gui(GLFWwindow *window)
     ImGui::CreateContext();
     ImGui_ImplGlfwGL3_Init(window, true);
     ImGui::StyleColorsDark();
+    this->_driver = MshSurfDriver();
 }
 
 void Gui::setModel(Model *model)
@@ -28,6 +29,7 @@ void Gui::setModel(Model *model)
     Material *modelMaterial = this->_model->getMaterial();
     this->_materialIntensity = modelMaterial->getSpecularIntensity();
     this->_materialShininessFactor = modelMaterial->getShininessFactor();
+    this->_driver.setModel(model);
 }
 
 void Gui::render()
@@ -70,6 +72,19 @@ void Gui::render()
         this->_model->setMaterial(new Material(this->_materialIntensity,
                                                this->_materialShininessFactor));
 
+        Geometry *selectedMeshGeometry = this->_model->getSelectedMeshGeometry();
+        ImGui::Text("\nSelected Triangles: %d", selectedMeshGeometry->getNumFaces());
+        ImGui::Text("Boundary size: %lu", selectedMeshGeometry->getBoundary().size());
+
+        if (ImGui::Button("Execute MshSurf"))
+        {
+            this->_driver.executeSupport();
+        }
+
+        if (ImGui::Checkbox("Render Model", &renderModel)) // Edit bools storing our windows open/close state
+        {
+            this->_model->setDoNotRender(!renderModel);
+        }
         // printf("second: %f\n", this->_model->getGeometry().vertices[0].coords.x);
         // static float f = 0.0f;
         // static int counter = 0;
@@ -78,12 +93,11 @@ void Gui::render()
         // ImGui::SliderFloat("float", &f, 0.0f, 1.0f);             // Edit 1 float using a slider from 0.0f to 1.0f
         // ImGui::ColorEdit3("clear color", (float *)&clear_color); // Edit 3 floats representing a color
 
-        // ImGui::Checkbox("Demo Window", &show_demo_window); // Edit bools storing our windows open/close state
         // ImGui::Checkbox("Another Window", &show_another_window);
 
-        // if (ImGui::Button("Button")) // Buttons return true when clicked (NB: most widgets return true when edited/activated)
-        //     counter++;
         // ImGui::SameLine();
+        // ImGui::Text("Execute MshSurf");
+        //     counter++;
         // ImGui::Text("counter = %d", counter);
         ImGui::End();
     }

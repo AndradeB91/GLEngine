@@ -2,6 +2,8 @@
 
 #include "Model.h"
 
+#include "MshSurfDriver.h"
+
 // vendor
 #include "../vendor/imgui/imgui.h"
 #include "../vendor/imgui/imgui_impl_glfw_gl3.h"
@@ -26,4 +28,6 @@ private:
 
     float _materialIntensity;
     int _materialShininessFactor;
+
+    MshSurfDriver _driver;
 };

@@ -14,6 +14,58 @@ GLint Geometry::getNumFaces()
     return this->faces.size();
 }
 
+std::vector<std::pair<GLint, GLint> > Geometry::getBoundary()
+{
+    return this->_boundary;
+}
+
+GLint Geometry::isEdgeIncluded(std::pair<GLint, GLint> edge)
+{
+    for (size_t i = 0; i < this->_boundary.size(); i++)
+    {
+        bool normalPair = this->_boundary[i].first == edge.first &&
+                          this->_boundary[i].second == edge.second;
+
+        bool invertedPair = this->_boundary[i].first == edge.second &&
+                            this->_boundary[i].second == edge.first;
+
+        if (normalPair || invertedPair)
+        {
+            return i;
+        }
+    }
+
+    return -1;
+}
+
+void Geometry::checkEdgeInBoundary(std::pair<GLint, GLint> edge)
+{
+    GLint indexToErase = this->isEdgeIncluded(edge);
+
+    if (indexToErase != -1)
+    {
+        this->_boundary.erase(this->_boundary.begin() + indexToErase);
+    }
+    else
+    {
+        this->_boundary.push_back(edge);
+    }
+}
+
+void Geometry::updateBoundary(GLint ind0, GLint ind1, GLint ind2)
+{
+    std::pair<GLint, GLint> e0{ind0, ind1}, e1{ind1, ind2}, e2{ind2, ind0};
+
+    this->checkEdgeInBoundary(e0);
+    this->checkEdgeInBoundary(e1);
+    this->checkEdgeInBoundary(e2);
+}
+
+void Geometry::setBoundary(std::vector<std::pair<GLint, GLint> > boundary)
+{
+    this->_boundary = boundary;
+}
+
 void Geometry::addVertice(GLfloat x, GLfloat y, GLfloat z)
 {
     this->vertices.push_back(Vertice(x, y, z));
@@ -36,7 +88,7 @@ void Geometry::removeFace(GLint index)
 
 void Geometry::updateGeometryByModelMatrix(glm::mat4 modelMatrix)
 {
-    for (size_t i = 0; i < this->getNumVertices(); i++)
+    for (size_t i = 0; i < this->vertices.size(); i++)
     {
         Vertice vertice = this->vertices[i];
         glm::vec4 modVert = modelMatrix * glm::vec4(vertice.coords.x,

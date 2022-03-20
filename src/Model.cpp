@@ -12,6 +12,7 @@ Model::Model(const char *vertexShader,
              unsigned int numOfVertices,
              unsigned int numOfIndices)
 {
+    this->_doNotRender = false;
     this->_shader = new Shader();
     this->_shader->createFromFiles(vertexShader, fragmentShader);
 
@@ -48,6 +49,7 @@ Model::Model(const char *vertexShader,
              unsigned int numOfVertices,
              unsigned int numOfIndices)
 {
+    this->_doNotRender = false;
     this->_shader = new Shader();
     this->_shader->createFromFiles(vertexShader, fragmentShader);
 
@@ -79,6 +81,7 @@ Model::Model(const char *vertexShader,
 Model::Model(const char *vertexShader,
              const char *fragmentShader)
 {
+    this->_doNotRender = false;
     this->_shader = new Shader();
     this->_shader->createFromFiles(vertexShader, fragmentShader);
 
@@ -256,6 +259,9 @@ void Model::selectFace(GLint index)
     // Adds new face to the geometry of the selected mesh
     this->_selectedMeshGeometry->addFace(face.ind0, face.ind1, face.ind2);
 
+    // Updates selected patch edge boundary based on the new selected face
+    this->_selectedMeshGeometry->updateBoundary(face.ind0, face.ind1, face.ind2);
+
     // Update the selected geometry by the inverse of the model matrix, so it can keep the original coordinates
     this->_selectedMeshGeometry->updateGeometryByModelMatrix(invModelMatrix);
 
@@ -289,9 +295,17 @@ void Model::prepareToRender()
     }
 }
 
+void Model::setDoNotRender(bool set)
+{
+    this->_doNotRender = set;
+}
+
 void Model::render()
 {
-    this->_mesh->render();
+    if (!this->_doNotRender)
+    {
+        this->_mesh->render();
+    }
 }
 
 void Model::renderSelectedMesh()

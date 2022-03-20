@@ -103,22 +103,24 @@ Model *createBlock()
     static const char *fragmentShader = "shaders/coloured-flat/shader.frag";
 
     Loader loader = Loader();
-    Geometry geometry = loader.loadObjGeometry("objs/block-noised.obj");
+    Geometry *geometry = loader.loadObjGeometry("objs/block-noised.obj");
 
-    Mesh *mesh = loader.geometryToMesh(geometry);
-
-    glm::mat4 modelMatrix(1.0f);
-    GLfloat scaleFactor = 0.06f;
-    modelMatrix = glm::scale(modelMatrix, glm::vec3(scaleFactor, scaleFactor, scaleFactor));
+    glm::mat4 modelMatrix = glm::scale(glm::mat4(1.0f), glm::vec3(0.06f, 0.06f, 0.06f));
 
     Model *model = new Model(vertexShader, fragmentShader);
     model->setName("block.obj");
+
     model->setModelMatrix(modelMatrix);
-    model->setScaleFactor(scaleFactor);
+
+    Mesh *mesh = loader.geometryToMesh(geometry);
     model->setMesh(mesh);
+
     model->setGeometry(geometry);
-    model->updateGeometryByModelMatrix();
+    model->buildSelectedMeshGeometry();
+    model->updateGeometriesByModelMatrix();
+
     model->setColourRGB(234, 197, 138);
+    model->setSelectedColourRGB(255, 0, 0);
     model->setMaterial(new Material(0.18f, 8));
 
     return model;
@@ -238,7 +240,7 @@ int main()
 {
     GLfloat deltaTime = 0.0f, lastTime = 0.0f;
 
-    glm::vec2 SCREEN(1376, 768);
+    glm::vec2 SCREEN(1280, 768);
     Window mainWindow = Window(SCREEN.x, SCREEN.y);
     mainWindow.initialize();
 

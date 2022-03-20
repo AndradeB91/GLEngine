@@ -75,6 +75,8 @@ public:
       void setName(const char *name);
       const char *getName();
 
+      void setDoNotRender(bool set);
+
       void prepareToRender();
       void render();
       void renderSelectedMesh();
@@ -96,4 +98,6 @@ private:
       glm::vec3 _colour, _selectedColour;
 
       const char *_name;
+
+      bool _doNotRender;
 };
