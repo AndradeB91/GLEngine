@@ -17,6 +17,8 @@ public:
 
     GLint getNumVertices();
     GLint getNumFaces();
+    GLfloat getFaceQuality(GLint index);
+
     std::vector<std::pair<GLint, GLint> > getBoundary();
 
     std::vector<Face> getFaces();

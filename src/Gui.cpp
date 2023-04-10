@@ -30,6 +30,9 @@ void Gui::setModel(Model *model)
     this->_materialIntensity = modelMaterial->getSpecularIntensity();
     this->_materialShininessFactor = modelMaterial->getShininessFactor();
     this->_driver.setModel(model);
+
+    this->_triangleQualityFactor = 0.25;
+    this->_maxElementSize = 0.03;
 }
 
 void Gui::render()
@@ -76,8 +79,26 @@ void Gui::render()
         ImGui::Text("\nSelected Triangles: %d", selectedMeshGeometry->getNumFaces());
         ImGui::Text("Boundary size: %lu", selectedMeshGeometry->getBoundary().size());
 
+        ImGui::InputFloat("Tri. Quality Factor", &this->_triangleQualityFactor, 0.05, 0.0, 2);
+        if (ImGui::Button("Select Triangles"))
+        {
+            Geometry *geometry = this->_model->getGeometry();
+            for (int i = 0; i < geometry->faces.size(); i++)
+            {
+                GLfloat quality = geometry->getFaceQuality(i);
+                if (quality <= this->_triangleQualityFactor)
+                {
+                    this->_model->selectFace(i);
+                    i = 0;
+                }
+            }
+        }
+
+        ImGui::InputFloat("Max Element Size", &this->_maxElementSize, 0.01, 0.0, 2);
+
         if (ImGui::Button("Execute MshSurf"))
         {
+            this->_driver.setSupportMaxElementSize(this->_maxElementSize);
             this->_driver.executeSupport();
         }
 

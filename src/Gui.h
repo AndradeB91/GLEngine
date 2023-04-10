@@ -29,5 +29,8 @@ private:
     float _materialIntensity;
     int _materialShininessFactor;
 
+    float _triangleQualityFactor;
+    float _maxElementSize;
+
     MshSurfDriver _driver;
 };

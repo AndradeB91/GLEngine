@@ -19,6 +19,29 @@ std::vector<std::pair<GLint, GLint> > Geometry::getBoundary()
     return this->_boundary;
 }
 
+GLfloat Geometry::getFaceQuality(GLint index)
+{
+    Face f = this->faces[index];
+
+    Vertice A = this->vertices[f.ind0];
+    Vertice B = this->vertices[f.ind1];
+    Vertice C = this->vertices[f.ind2];
+
+    glm::vec3 cA = A.coords;
+    glm::vec3 cB = B.coords;
+    glm::vec3 cC = C.coords;
+
+    GLfloat a = glm::distance(cB, cC);
+    GLfloat b = glm::distance(cA, cC);
+    GLfloat c = glm::distance(cA, cB);
+
+    GLfloat s = (a + b + c) / 2.0f;
+    GLfloat inscribedCircleRadius = sqrt(((s - a) * (s - b) * (s - c)) / s);
+    GLfloat circumscribedCircleRadius = (a * b * c) / (4.0f * sqrt(s * (s - a) * (s - b) * (s - c)));
+
+    return 2.0f * (inscribedCircleRadius / circumscribedCircleRadius);
+}
+
 GLint Geometry::isEdgeIncluded(std::pair<GLint, GLint> edge)
 {
     for (size_t i = 0; i < this->_boundary.size(); i++)

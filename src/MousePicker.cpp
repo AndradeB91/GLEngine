@@ -59,26 +59,6 @@ void MousePicker::intersects(glm::vec3 camPos,
     }
 }
 
-// void MousePicker::addUniqueIndexToList(GLint index)
-// {
-//     bool isAlreadyIncluded = false;
-
-//     for (std::list<int>::iterator it = this->_selectedFacesIndex.begin();
-//          it != this->_selectedFacesIndex.end(); ++it)
-//     {
-//         if (*it == index)
-//         {
-//             isAlreadyIncluded = true;
-//             break;
-//         }
-//     }
-
-//     if (isAlreadyIncluded == false)
-//     {
-//         this->_selectedFacesIndex.push_back(index);
-//     }
-// }
-
 glm::vec3 MousePicker::getMouseToScreenRay(GLfloat mouseXPos, GLfloat mouseYPos)
 {
     glm::vec2 normalizedCoords = this->getNormalizedDeviceCoords(mouseXPos, mouseYPos);

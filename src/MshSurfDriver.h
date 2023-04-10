@@ -18,6 +18,8 @@ public:
 
     void setModel(Model *model);
 
+    void setSupportMaxElementSize(GLfloat maxElementSize);
+
     void convertToBoundarySurf(int &nPts,
                                double *&pts,
                                int &nBoundEdges,

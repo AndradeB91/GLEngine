@@ -130,7 +130,7 @@ Model *createFloor()
 {
     static const char *vertexShader = "shaders/textured/shader.vert";
     static const char *fragmentShader = "shaders/textured/shader.frag";
-    static const char *texturePath = "textures/plain.png";
+    static const char *texturePath = "textures/dirt.png";
 
     unsigned int indices[] = {
         0, 2, 1,

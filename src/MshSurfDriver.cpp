@@ -5,7 +5,7 @@ MshSurfDriver::MshSurfDriver()
 {
     this->_model = NULL;
     this->_messageFunction = NULL;
-    this->_supportMaxElementSize = 0.07;
+    this->_supportMaxElementSize = 0.03;
     this->_supportComputeCurvature = true;
 }
 
@@ -16,6 +16,11 @@ MshSurfDriver::~MshSurfDriver()
 void MshSurfDriver::setModel(Model *model)
 {
     this->_model = model;
+}
+
+void MshSurfDriver::setSupportMaxElementSize(GLfloat maxElementSize)
+{
+    this->_supportMaxElementSize = maxElementSize;
 }
 
 void MshSurfDriver::convertToMeshSurf(int &nPts, double *&pts, int &nElems, int *&elems,
