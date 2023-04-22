@@ -13,6 +13,7 @@
 #include "PointLight.h"
 #include "SpotLight.h"
 #include "FlashLight.h"
+#include "Window.h"
 
 const unsigned int MAX_POINT_LIGHTS = 8;
 const unsigned int MAX_SPOT_LIGHTS = 8;
@@ -35,6 +36,8 @@ public:
 
     void setCameraPointer(Camera *camera);
 
+    void setWindow(Window *window);
+
     void render();
 
 private:
@@ -46,11 +49,17 @@ private:
     FlashLight *_flashLight;
     std::vector<PointLight *> _pointLights;
     std::vector<SpotLight *> _spotLights;
+    Window *_window;
 
     Camera *_camera;
 
-    void renderDirectionalLight(Shader *shader);
-    void renderPointLights(Shader *shader);
-    void renderSpotLights(Shader *shader);
+    Shader _directionalLightShader;
+
+    void setDirectionalLightInfo(Shader *shader);
+    void setPointLightsInfo(Shader *shader);
+    void setSpotLightsInfo(Shader *shader);
     void updateFlashLight();
+
+    void renderPass();
+    void shadowMapPass();
 };

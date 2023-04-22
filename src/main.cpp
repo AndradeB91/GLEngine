@@ -16,7 +16,6 @@
 #include "Camera.h"
 #include "Texture.h"
 #include "DirectionalLight.h"
-#include "SpotLight.h"
 #include "FlashLight.h"
 #include "Scene.h"
 #include "Loader.h"
@@ -66,37 +65,6 @@ void calcAverageNormals(unsigned int *indices,
     }
 }
 
-// std::vector<Model *> createBlock()
-// {
-//     static const char *vertexShader = "shaders/coloured-flat/shader.vert";
-//     static const char *fragmentShader = "shaders/coloured-flat/shader.frag";
-
-//     Loader loader = Loader();
-//     loader.loadObj("objs/block-noised.obj");
-
-//     // Geometry geo = loader.loadObjGeometry("objs/block-noised.obj");
-//     // printf("%lu, %lu", geo.getVertices().size(), geo.getFaces().size());
-
-//     std::vector<Model *> modelsList;
-//     std::vector<Mesh *> meshList = loader.getMeshList();
-
-//     for (size_t i = 0; i < meshList.size(); i++)
-//     {
-//         glm::mat4 modelMatrix(1.0f);
-//         modelMatrix = glm::scale(modelMatrix, glm::vec3(0.1f, 0.1f, 0.1f));
-
-//         Model *model = new Model(vertexShader, fragmentShader);
-
-//         model->setMesh(meshList[i]);
-//         model->setModelMatrix(modelMatrix);
-//         model->setColourRGB(234, 197, 138);
-
-//         modelsList.push_back(model);
-//     }
-
-//     return modelsList;
-// }
-
 Model *createBlock()
 {
     static const char *vertexShader = "shaders/coloured-flat/shader.vert";
@@ -126,6 +94,38 @@ Model *createBlock()
     return model;
 }
 
+std::vector<Model *> createXWing()
+{
+    static const char *vertexShader = "shaders/textured/shader.vert";
+    static const char *fragmentShader = "shaders/textured/shader.frag";
+
+    Loader loader = Loader();
+    loader.loadObj("objs/x-wing.obj");
+
+    std::vector<Model *> modelsList;
+
+    std::vector<Mesh *> meshList = loader.getMeshList();
+    std::vector<Texture *> textureList = loader.getTextureList();
+    std::vector<unsigned int> meshToTex = loader.getMeshToTex();
+
+    for (size_t i = 0; i < meshList.size(); i++)
+    {
+        glm::mat4 modelMatrix(1.0f);
+        modelMatrix = glm::translate(modelMatrix, glm::vec3(-8.0f, 0.5f, 8.0f));
+        modelMatrix = glm::scale(modelMatrix, glm::vec3(0.006f, 0.006f, 0.006f));
+
+        Model *model = new Model(vertexShader, fragmentShader);
+        unsigned int materialIndex = meshToTex[i];
+        model->setTexture(textureList[materialIndex]);
+        model->setMesh(meshList[i]);
+        model->setModelMatrix(modelMatrix);
+
+        modelsList.push_back(model);
+    }
+
+    return modelsList;
+}
+
 Model *createFloor()
 {
     static const char *vertexShader = "shaders/textured/shader.vert";
@@ -142,9 +142,6 @@ Model *createFloor()
         -10.0f, 0.0f, 10.0f, 0.0f, 10.0f, 0.0f, -1.0f, 0.0f,
         10.0f, 0.0f, 10.0f, 10.0f, 10.0f, 0.0f, -1.0f, 0.0f};
 
-    glm::mat4 modelMatrix(1.0f);
-    modelMatrix = glm::translate(modelMatrix, glm::vec3(0.0f, -2.0f, 0.0f));
-
     Model *model = new Model(vertexShader,
                              fragmentShader,
                              texturePath,
@@ -154,7 +151,6 @@ Model *createFloor()
                              6);
 
     model->setMaterial(new Material(1.0f, 7));
-    model->setModelMatrix(modelMatrix);
 
     return model;
 }
@@ -199,8 +195,8 @@ Model *createPyramidWithoutTexture()
 
 Model *createPyramid()
 {
-    static const char *vertexShader = "shaders/shader.vert";
-    static const char *fragmentShader = "shaders/shader.frag";
+    static const char *vertexShader = "shaders/textured/shader.vert";
+    static const char *fragmentShader = "shaders/textured/shader.frag";
     static const char *texturePath = "textures/brick.png";
 
     unsigned int indices[] = {
@@ -216,7 +212,7 @@ Model *createPyramid()
         0.0f, 1.0f, 0.0f, 0.5f, 1.0f, 0.0f, 0.0f, 0.0f};
 
     glm::mat4 modelMatrix(1.0f);
-    modelMatrix = glm::translate(modelMatrix, glm::vec3(0.0f, 0.0f, -2.5f));
+    modelMatrix = glm::translate(modelMatrix, glm::vec3(0.0f, 2.0f, 0.0f));
 
     Material *material = new Material(1.0f, 32);
 
@@ -290,12 +286,17 @@ int main()
                                     -3.0f, -3.0f, -3.0f,
                                     0.8f, 0.2f, 0.1f);
 
-    FlashLight *flashLight = new FlashLight(0.8f, 0.8f, 0.8f,
-                                            0.2f, 0.3f,
+    DirectionalLight *directionalLight = new DirectionalLight(1.0f, 1.0f, 1.0f,
+                                                              0.0f, 0.3f,
+                                                              0.0f, -15.0f, -10.0f,
+                                                              2048, 2048);
+
+    FlashLight *flashLight = new FlashLight(1.0f, 1.0f, 1.0f,
+                                            0.0f, 2.0f,
                                             0.0f, 0.0f, 0.0f,
                                             0.0f, -1.0f, 0.0f,
-                                            0.7f, 0.001f, 0.001f,
-                                            200.0f);
+                                            1.0f, 0.0f, 0.0f,
+                                            20.0f);
 
     glm::mat4 projection = glm::perspective(glm::radians(45.0f),
                                             (GLfloat)mainWindow.getBufferWidth() / mainWindow.getBufferHeight(),
@@ -306,28 +307,33 @@ int main()
 
     Scene scene = Scene();
 
+    scene.setWindow(&mainWindow);
+
     scene.addModel(floor);
-    scene.addModel(block);
+    scene.addModels(createXWing());
+    // scene.addModel(block);
+    // scene.addModel(createPyramid());
 
     scene.setProjectionMatrix(projection);
 
-    scene.addPointLight(p1);
-    scene.addPointLight(p2);
-    scene.addPointLight(p3);
-    scene.addPointLight(p4);
-    scene.addPointLight(p5);
-    scene.addPointLight(p6);
-    scene.addPointLight(p7);
-    scene.addPointLight(p8);
+    // scene.addPointLight(p1);
+    // scene.addPointLight(p2);
+    // scene.addPointLight(p3);
+    // scene.addPointLight(p4);
+    // scene.addPointLight(p5);
+    // scene.addPointLight(p6);
+    // scene.addPointLight(p7);
+    // scene.addPointLight(p8);
 
     scene.setFlashLight(flashLight);
+    scene.setDirectionalLight(directionalLight);
 
     scene.setCameraPointer(&camera);
 
     MousePicker mousePicker = MousePicker(SCREEN.x, SCREEN.y, projection, block);
 
-    Gui interface = Gui(mainWindow.getWindowPointer());
-    interface.setModel(block);
+    // Gui interface = Gui(mainWindow.getWindowPointer());
+    // interface.setModel(block);
 
     while (!mainWindow.getShouldClose())
     {
@@ -338,16 +344,12 @@ int main()
         // Get and handle user input events
         glfwPollEvents();
 
-        // Clear window
-        glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
-        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
         camera.listenKeys(&mainWindow, deltaTime);
         camera.listenMousePicker(&mainWindow, &mousePicker);
         camera.listenMouseMovement(mainWindow.getXDelta(), mainWindow.getYDelta());
 
         scene.render();
-        interface.render();
+        // interface.render();
 
         mainWindow.swapBuffers();
     }

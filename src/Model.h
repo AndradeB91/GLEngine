@@ -43,6 +43,7 @@ public:
       void setShader(Shader *shader);
       Shader *getShader();
 
+      void setTexture(const char *texturePath);
       void setTexture(Texture *texture);
       Texture *getTexture();
 

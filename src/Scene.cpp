@@ -6,6 +6,9 @@ Scene::Scene()
     this->_directionalLight = new DirectionalLight();
     this->_camera = new Camera();
     this->_flashLight = NULL;
+    this->_window = NULL;
+    this->_directionalLightShader = Shader();
+    this->_directionalLightShader.createFromFiles("shaders/directional-shadow-map/shader.vert", "shaders/directional-shadow-map/shader.frag");
 }
 
 void Scene::addModel(Model *model)
@@ -37,6 +40,11 @@ void Scene::setFlashLight(FlashLight *flashLight)
     this->_flashLight = flashLight;
 }
 
+void Scene::setWindow(Window *window)
+{
+    this->_window = window;
+}
+
 void Scene::addPointLight(PointLight *pointLight)
 {
     if (this->_pointLights.size() > MAX_POINT_LIGHTS)
@@ -62,7 +70,7 @@ void Scene::setCameraPointer(Camera *camera)
     this->_camera = camera;
 }
 
-void Scene::renderDirectionalLight(Shader *shader)
+void Scene::setDirectionalLightInfo(Shader *shader)
 {
     DirectionalLight *directionalLight = this->_directionalLight;
 
@@ -72,7 +80,7 @@ void Scene::renderDirectionalLight(Shader *shader)
     shader->setUniform3f("directionalLight.direction", directionalLight->getDirection());
 }
 
-void Scene::renderPointLights(Shader *shader)
+void Scene::setPointLightsInfo(Shader *shader)
 {
     unsigned int pointLightsCount = this->_pointLights.size();
     shader->setUniform1i("pointLightsCount", pointLightsCount);
@@ -105,7 +113,7 @@ void Scene::renderPointLights(Shader *shader)
     }
 }
 
-void Scene::renderSpotLights(Shader *shader)
+void Scene::setSpotLightsInfo(Shader *shader)
 {
     unsigned int spotLightsCount = this->_spotLights.size();
     shader->setUniform1i("spotLightsCount", spotLightsCount);
@@ -146,47 +154,87 @@ void Scene::renderSpotLights(Shader *shader)
 
 void Scene::updateFlashLight()
 {
-    Camera *camera = this->_camera;
-    FlashLight *flashLight = this->_flashLight;
-    if (flashLight != NULL)
+    if (this->_flashLight != NULL)
     {
-        flashLight->update(camera->getPosition(), camera->getDirection());
+        this->_flashLight->update(this->_camera->getPosition(), this->_camera->getDirection());
     }
 }
 
-void Scene::render()
+void Scene::renderPass()
 {
+    glViewport(0, 0, this->_window->getBufferWidth(), this->_window->getBufferHeight());
+
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
     std::vector<Model *>::iterator itModel;
+
+    this->_directionalLight->getShadowMap()->read(GL_TEXTURE1);
 
     for (itModel = this->_modelList.begin(); itModel != this->_modelList.end(); ++itModel)
     {
         (*itModel)->prepareToRender();
 
         Shader *shader = (*itModel)->getShader();
+
         Material *material = (*itModel)->getMaterial();
         Camera *camera = this->_camera;
-        Texture *texture = (*itModel)->getTexture();
 
-        shader->setUniform3f("modelColour", (*itModel)->getColour());
-
-        shader->setUniformMatrix4fv("model", (*itModel)->getModelMatrix());
         shader->setUniformMatrix4fv("projection", this->_projectionMatrix);
         shader->setUniformMatrix4fv("view", camera->calculateViewMatrix());
         shader->setUniform3f("eyePosition", camera->getPosition());
 
+        // shader->setUniform3f("modelColour", (*itModel)->getColour());
+        this->setDirectionalLightInfo(shader);
+        this->setPointLightsInfo(shader);
+        this->setSpotLightsInfo(shader);
+        this->updateFlashLight();
+
+        shader->setUniformMatrix4fv("directionalLightTransform", this->_directionalLight->calculateLightTransform());
+
+        shader->setUniform1i("theTexture", 0);
+        shader->setUniform1i("directionalShadowMap", 1);
+
+        shader->setUniformMatrix4fv("model", (*itModel)->getModelMatrix());
         shader->setUniform1f("material.specularIntensity", material->getSpecularIntensity());
         shader->setUniform1f("material.shininess", material->getShininess());
 
-        this->renderDirectionalLight(shader);
-        this->renderPointLights(shader);
-        this->renderSpotLights(shader);
-        this->updateFlashLight();
-
         (*itModel)->render();
 
-        shader->setUniform3f("modelColour", (*itModel)->getSelectedColour());
-        (*itModel)->renderSelectedMesh();
+        // shader->setUniform3f("modelColour", (*itModel)->getSelectedColour());
+        // (*itModel)->renderSelectedMesh();
     }
+}
+
+void Scene::shadowMapPass()
+{
+    this->_directionalLightShader.useShader();
+
+    this->_directionalLightShader.setUniformMatrix4fv("directionalLightTransform",
+                                                      this->_directionalLight->calculateLightTransform());
+
+    GLuint shadowWidth = this->_directionalLight->getShadowMap()->getShadowWidth();
+    GLuint shadowHeight = this->_directionalLight->getShadowMap()->getShadowHeight();
+    glViewport(0, 0, shadowWidth, shadowHeight);
+
+    this->_directionalLight->getShadowMap()->write();
+
+    glClear(GL_DEPTH_BUFFER_BIT);
+
+    std::vector<Model *>::iterator itModel;
+
+    for (itModel = this->_modelList.begin(); itModel != this->_modelList.end(); ++itModel)
+    {
+        this->_directionalLightShader.setUniformMatrix4fv("model", (*itModel)->getModelMatrix());
+        (*itModel)->render();
+    }
+
+    glBindFramebuffer(GL_FRAMEBUFFER, 0);
+}
+
+void Scene::render()
+{
+    this->shadowMapPass();
+    this->renderPass();
 }
 
 Scene::~Scene()

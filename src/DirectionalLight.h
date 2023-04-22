@@ -14,9 +14,13 @@ public:
                      GLfloat diffuseIntensity,
                      GLfloat xDir,
                      GLfloat yDir,
-                     GLfloat zDir);
+                     GLfloat zDir,
+                     GLfloat shadowWidth,
+                     GLfloat shadowHeight);
 
     glm::vec3 getDirection();
+
+    glm::mat4 calculateLightTransform();
 
     void setDirection(glm::vec3 direction);
 

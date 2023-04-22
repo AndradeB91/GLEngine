@@ -135,6 +135,12 @@ void Model::setTexture(Texture *texture)
     this->_texture = texture;
 }
 
+void Model::setTexture(const char *texturePath)
+{
+    this->_texture = new Texture(texturePath);
+    this->_texture->loadTextureWithAlpha();
+}
+
 Texture *Model::getTexture()
 {
     return this->_texture;

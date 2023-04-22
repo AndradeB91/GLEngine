@@ -11,11 +11,16 @@ Light::Light(GLfloat red,
              GLfloat green,
              GLfloat blue,
              GLfloat ambientIntensity,
-             GLfloat diffuseIntensity)
+             GLfloat diffuseIntensity,
+             GLfloat shadowWidth,
+             GLfloat shadowHeight)
 {
     this->_colour = glm::vec3(red, green, blue);
     this->_ambientIntensity = ambientIntensity;
     this->_diffuseIntensity = diffuseIntensity;
+
+    this->_shadowMap = new ShadowMap();
+    this->_shadowMap->init(shadowWidth, shadowHeight);
 }
 
 glm::vec3 Light::getColour()
