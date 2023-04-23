@@ -126,6 +126,37 @@ std::vector<Model *> createXWing()
     return modelsList;
 }
 
+std::vector<Model *> createCat()
+{
+    static const char *vertexShader = "shaders/textured/shader.vert";
+    static const char *fragmentShader = "shaders/textured/shader.frag";
+
+    Loader loader = Loader();
+    loader.loadObj("objs/cat.obj");
+
+    std::vector<Model *> modelsList;
+
+    std::vector<Mesh *> meshList = loader.getMeshList();
+    std::vector<Texture *> textureList = loader.getTextureList();
+    std::vector<unsigned int> meshToTex = loader.getMeshToTex();
+
+    for (size_t i = 0; i < meshList.size(); i++)
+    {
+        glm::mat4 modelMatrix(1.0f);
+        modelMatrix = glm::rotate(modelMatrix, (float)glm::radians(-90.0f), glm::vec3(1, 0, 0));
+        modelMatrix = glm::scale(modelMatrix, glm::vec3(0.04f, 0.04f, 0.04f));
+
+        Model *model = new Model(vertexShader, fragmentShader);
+        unsigned int materialIndex = meshToTex[i];
+        model->setTexture(textureList[materialIndex]);
+        model->setMesh(meshList[i]);
+        model->setModelMatrix(modelMatrix);
+
+        modelsList.push_back(model);
+    }
+
+    return modelsList;
+}
 Model *createFloor()
 {
     static const char *vertexShader = "shaders/textured/shader.vert";
@@ -242,7 +273,7 @@ int main()
 
     Camera camera = Camera(2.0f, 2.0f, 2.0f,
                            0.0f, 1.0f, 0.0f,
-                           -135.0f, -38.0f,
+                           -135.0f, -25.0f,
                            3.0f,
                            0.1f);
 
@@ -287,12 +318,12 @@ int main()
                                     0.8f, 0.2f, 0.1f);
 
     DirectionalLight *directionalLight = new DirectionalLight(1.0f, 1.0f, 1.0f,
-                                                              0.0f, 0.3f,
-                                                              0.0f, -15.0f, -10.0f,
-                                                              2048, 2048);
+                                                              0.2f, 1.0f,
+                                                              -20.0f, -15.0f, -10.0f,
+                                                              4000, 4000);
 
     FlashLight *flashLight = new FlashLight(1.0f, 1.0f, 1.0f,
-                                            0.0f, 2.0f,
+                                            0.5f, 0.4f,
                                             0.0f, 0.0f, 0.0f,
                                             0.0f, -1.0f, 0.0f,
                                             1.0f, 0.0f, 0.0f,
@@ -310,7 +341,8 @@ int main()
     scene.setWindow(&mainWindow);
 
     scene.addModel(floor);
-    scene.addModels(createXWing());
+    // scene.addModels(createXWing());
+    scene.addModels(createCat());
     // scene.addModel(block);
     // scene.addModel(createPyramid());
 
@@ -325,7 +357,7 @@ int main()
     // scene.addPointLight(p7);
     // scene.addPointLight(p8);
 
-    scene.setFlashLight(flashLight);
+    // scene.setFlashLight(flashLight);
     scene.setDirectionalLight(directionalLight);
 
     scene.setCameraPointer(&camera);
