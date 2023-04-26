@@ -278,43 +278,23 @@ int main()
                            0.1f);
 
     PointLight *p1 = new PointLight(1.0f, 1.0f, 1.0f,
-                                    0.01f, 0.5f,
-                                    3.0f, 3.0f, 3.0f,
+                                    0.01f, 1.0f,
+                                    2.0f, 1.0f, 2.0f,
                                     0.8f, 0.2f, 0.1f);
 
-    PointLight *p2 = new PointLight(1.0f, 1.0f, 1.0f,
-                                    0.01f, 0.5f,
-                                    -3.0f, 3.0f, 3.0f,
+    PointLight *p2 = new PointLight(0.0f, 1.0f, 0.0f,
+                                    0.01f, 1.0f,
+                                    -2.0f, 1.0f, 2.0f,
                                     0.8f, 0.2f, 0.1f);
 
-    PointLight *p3 = new PointLight(1.0f, 1.0f, 1.0f,
-                                    0.01f, 0.5f,
-                                    3.0f, 3.0f, -3.0f,
+    PointLight *p3 = new PointLight(0.0f, 0.0f, 1.0f,
+                                    0.01f, 1.0f,
+                                    2.0f, 1.0f, -2.0f,
                                     0.8f, 0.2f, 0.1f);
 
-    PointLight *p4 = new PointLight(1.0f, 1.0f, 1.0f,
-                                    0.01f, 0.5f,
-                                    -3.0f, 3.0f, -3.0f,
-                                    0.8f, 0.2f, 0.1f);
-
-    PointLight *p5 = new PointLight(1.0f, 1.0f, 1.0f,
-                                    0.01f, 0.5f,
-                                    3.0f, -3.0f, 3.0f,
-                                    0.8f, 0.2f, 0.1f);
-
-    PointLight *p6 = new PointLight(1.0f, 1.0f, 1.0f,
-                                    0.01f, 0.5f,
-                                    -3.0f, -3.0f, 3.0f,
-                                    0.8f, 0.2f, 0.1f);
-
-    PointLight *p7 = new PointLight(1.0f, 1.0f, 1.0f,
-                                    0.01f, 0.5f,
-                                    3.0f, -3.0f, -3.0f,
-                                    0.8f, 0.2f, 0.1f);
-
-    PointLight *p8 = new PointLight(1.0f, 1.0f, 1.0f,
-                                    0.01f, 0.5f,
-                                    -3.0f, -3.0f, -3.0f,
+    PointLight *p4 = new PointLight(1.0f, 0.0f, 0.0f,
+                                    0.01f, 1.0f,
+                                    -2.0f, 1.0f, -2.0f,
                                     0.8f, 0.2f, 0.1f);
 
     DirectionalLight *directionalLight = new DirectionalLight(1.0f, 1.0f, 1.0f,
@@ -348,14 +328,10 @@ int main()
 
     scene.setProjectionMatrix(projection);
 
-    // scene.addPointLight(p1);
-    // scene.addPointLight(p2);
-    // scene.addPointLight(p3);
-    // scene.addPointLight(p4);
-    // scene.addPointLight(p5);
-    // scene.addPointLight(p6);
-    // scene.addPointLight(p7);
-    // scene.addPointLight(p8);
+    scene.addPointLight(p1);
+    scene.addPointLight(p2);
+    scene.addPointLight(p3);
+    scene.addPointLight(p4);
 
     // scene.setFlashLight(flashLight);
     scene.setDirectionalLight(directionalLight);

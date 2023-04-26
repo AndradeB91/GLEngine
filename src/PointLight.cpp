@@ -28,6 +28,31 @@ PointLight::PointLight(GLfloat red,
     this->_constant = constant;
     this->_linear = linear;
     this->_exponent = exponent;
+
+    static const char *vertexShader = "shaders/light/shader.vert";
+    static const char *fragmentShader = "shaders/light/shader.frag";
+
+    GLfloat *vertices;
+    unsigned int *indices;
+    int numVertices;
+    int numIndices;
+
+    Primitive::generateSphere(20, 20, 0.1,
+                              vertices, indices,
+                              numVertices, numIndices);
+
+    this->_model = new Model(vertexShader,
+                             fragmentShader,
+                             NULL,
+                             vertices,
+                             indices,
+                             numVertices,
+                             numIndices,
+                             3);
+
+    glm::mat4 modelMatrix(1.0f);
+    modelMatrix = glm::translate(modelMatrix, this->_position);
+    this->_model->setModelMatrix(modelMatrix);
 }
 
 void PointLight::setPosition(glm::vec3 position)
@@ -53,6 +78,11 @@ GLfloat PointLight::getLinear()
 GLfloat PointLight::getExponent()
 {
     return this->_exponent;
+}
+
+Model *PointLight::getModel()
+{
+    return this->_model;
 }
 
 PointLight::~PointLight()

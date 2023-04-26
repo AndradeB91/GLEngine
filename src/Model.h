@@ -23,7 +23,8 @@ public:
             GLfloat *vertices,
             unsigned int *indices,
             unsigned int numOfVertices,
-            unsigned int numOfIndices);
+            unsigned int numOfIndices,
+            unsigned int lineSize = 8);
 
       Model(const char *vertexShader,
             const char *fragmentShader,

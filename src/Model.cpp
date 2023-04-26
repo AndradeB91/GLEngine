@@ -10,7 +10,8 @@ Model::Model(const char *vertexShader,
              GLfloat *vertices,
              unsigned int *indices,
              unsigned int numOfVertices,
-             unsigned int numOfIndices)
+             unsigned int numOfIndices,
+             unsigned int lineSize)
 {
     this->_doNotRender = false;
     this->_shader = new Shader();
@@ -26,14 +27,17 @@ Model::Model(const char *vertexShader,
                        (GLint[]){0, 1, 2},
                        (GLint[]){3, 2, 3},
                        (GLenum[]){GL_FLOAT, GL_FLOAT, GL_FLOAT},
-                       8,
+                       lineSize,
                        (unsigned int[]){0, 3, 5});
 
     this->_geometry = new Geometry();
     this->_selectedMeshGeometry = new Geometry();
 
-    this->_texture = new Texture(texturePath);
-    this->_texture->loadTextureWithAlpha();
+    if (texturePath != NULL)
+    {
+        this->_texture = new Texture(texturePath);
+        this->_texture->loadTextureWithAlpha();
+    }
 
     this->_material = new Material();
 

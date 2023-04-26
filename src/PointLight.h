@@ -1,6 +1,8 @@
 #pragma once
 
 #include "Light.h"
+#include "Model.h"
+#include "Primitive.h"
 
 class PointLight : public Light
 {
@@ -25,10 +27,14 @@ public:
     GLfloat getLinear();
     GLfloat getExponent();
 
+    Model *getModel();
+
     ~PointLight();
 
 protected:
     glm::vec3 _position;
 
     GLfloat _constant, _linear, _exponent;
+
+    Model *_model;
 };

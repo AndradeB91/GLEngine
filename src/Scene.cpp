@@ -166,9 +166,11 @@ void Scene::renderPass()
 
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-    std::vector<Model *>::iterator itModel;
-
     this->_directionalLight->getShadowMap()->read(GL_TEXTURE1);
+
+    Camera *camera = this->_camera;
+
+    std::vector<Model *>::iterator itModel;
 
     for (itModel = this->_modelList.begin(); itModel != this->_modelList.end(); ++itModel)
     {
@@ -177,7 +179,6 @@ void Scene::renderPass()
         Shader *shader = (*itModel)->getShader();
 
         Material *material = (*itModel)->getMaterial();
-        Camera *camera = this->_camera;
 
         shader->setUniformMatrix4fv("projection", this->_projectionMatrix);
         shader->setUniformMatrix4fv("view", camera->calculateViewMatrix());
@@ -202,6 +203,24 @@ void Scene::renderPass()
 
         // shader->setUniform3f("modelColour", (*itModel)->getSelectedColour());
         // (*itModel)->renderSelectedMesh();
+    }
+
+    std::vector<PointLight *>::iterator itPointLights;
+
+    for (itPointLights = this->_pointLights.begin(); itPointLights != this->_pointLights.end(); ++itPointLights)
+    {
+        Model *model = (*itPointLights)->getModel();
+        model->prepareToRender();
+
+        Shader *shader = model->getShader();
+
+        shader->setUniformMatrix4fv("model", model->getModelMatrix());
+        shader->setUniformMatrix4fv("projection", this->_projectionMatrix);
+        shader->setUniformMatrix4fv("view", camera->calculateViewMatrix());
+
+        shader->setUniform3f("lightColour", (*itPointLights)->getColour());
+
+        model->render();
     }
 }
 
